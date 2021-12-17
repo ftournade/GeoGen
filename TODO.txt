@@ -1,0 +1,131 @@
+NextZen.org APIKey Tk5l6HaASU-wBGI10b7Jxw
+here APPId EEQkiz6K1c5PfHnQRfBo - APPCode MCvh3taiRluW_PHP3ocekQ
+https://www.codeproject.com/Articles/14793/How-Google-Map-Works
+https://github.com/domlysz/BlenderGIS/blob/master/core/basemaps/servicesDefs.py
+
+bugs:
+	Curve node reload
+	nodes save resolution & preview mode pref
+	blur node min radius != 0
+
+nodes:
+	substance nodes https://www.youtube.com/watch?v=IcwDAoegKsg
+	checker
+	minstrell (more options, fractal... )
+	HSL node -(still need some love)
+	normalize node (remap to [0...1])
+	histogram normalize (CPU ?)
+	ScatterMap ( halton, poisson, hammersley, jittered grid distrib)
+	snow (read http://www.ep.liu.se/ecp/007/002/ecp00702.pdf & http://www.ep.liu.se/ecp/013/007/ecp01307.pdf )
+	spike removal ( median filter ? https://en.wikipedia.org/wiki/Lulu_smoothing ?)
+	F3 voronoi ...	
+	directional distort
+	distance field (https://www.gamedev.net/forums/topic/619933-fast-way-to-calculate-2d-signed-distance-field/ - https://blog.demofox.org/2016/02/29/fast-voronoi-diagrams-and-distance-dield-textures-on-the-gpu-with-the-jump-flooding-algorithm/)
+	custom 3x3 filter kernel
+	edge detection filter
+	bilateral filter aka "feature preserving blur"
+	CustomComputeNode hlsl edition (allows direct editing of HLSL code in a node)
+	sand dunes	( https://www.youtube.com/watch?v=pL02a1l6edY https://www.youtube.com/watch?v=FD3gHaayXVQ https://github.com/LinuxChristian/Aeolian-Modeling http://web.ncf.ca/jim/sand/dunefieldMorphology/index.html )
+	horizon map
+	"shadow map"
+	occlusion node
+	curl noise
+	shape nodes (star, square, circle, bricks, hexagon & square tiles etc)
+	transform node (pre & post)
+	text node
+	"layout" node (name: Vector Graphics node ?)
+	paint mask (&color ?)node
+	substance grunge maps (how it's made ?)
+	procedural moutain ranges based on pseudo tree growing
+	roads system
+	rivers system
+
+general:
+	DEMGrabber: add service(s) https://developer.here.com (handle various layers)
+		https://1.aerial.maps.cit.api.here.com/maptile/2.1/maptile/newest/satellite.day/5/15/12/256/png8
+		https://1.aerial.maps.cit.api.here.com/maptile/2.1/maptile/newest/satellite.day/13/4400/2686/256/png8?app_id=EEQkiz6K1c5PfHnQRfBo&app_code=MCvh3taiRluW_PHP3ocekQ
+		bing maps ?
+	
+	DEMGrabber: shadow removal https://www.google.fr/search?q=shadow+detection+and+removal+satellite+image&rlz=1C1CHBF_frFR713FR713&oq=sattelite+shadow+removal&aqs=chrome.1.69i57j0.7767j0j7&sourceid=chrome&ie=UTF-8
+
+	random seed - WS nodes - coords transform on generators
+	handle boundaries (e.g. slope mask node, normal node ...)
+	resolution invariance
+	memory saving techniques (tiled builds & Output Map pooling)
+	per-node versioning
+	ship shader binary instead of .hlsl
+	"optimize network" (concatenated custom hlsl node)
+
+erosion node(s):
+	finish agent based erosion
+	try porting agend based erosion to GPU
+
+snow node:
+	http://www.geo.uzh.ch/~stgruber/pubs/gruber_2007-WRR.pdf
+	http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.162.2433&rep=rep1&type=pdf
+
+
+UI & usability:
+	nodes presets
+	per node input sampler choice (linear,point,bicubic)
+	nodes presets
+	log slider
+	"Unchain sliders" (soft & hard limits)
+	Grouping
+	Comments
+	drag selection box ( right mouse button drags view, if no mousemove right mouse button opens popup menu )
+	copy/cut/paste
+	Undo/Redo
+	black boxing (World-machine macros)
+	bitmap I/O: support more file formats (dem, bmp, raw16, ter, etc...)
+	macro shop
+
+3D Preview:
+	side by side before/after comparison
+	shadows
+	tri-planar texturing
+	über terrain rendering mode (bicubic height filtering/splat maps/tesselation/displacement...)
+	terrain SSAO as in http://codeflow.org/entries/2011/nov/10/webgl-gpu-landscaping-and-erosion/#erosion
+	BONUS: atmospheric scattering
+	BONUS: ocean / river shader
+
+Misc/Unsorted:
+	refactor everything, some datas/methods are all over the place (UI/generation separation for generation lib preparation)
+	cleanup unneeded MFC stuff
+	support 3D displacement (overhangs, more detailed rock cliffs...)
+	in the same vein as CustomComputeNode for HLSL do the same for CPU (runtime compiled c++ ?)
+	node plugin architecture
+	Macro/terrain Online store
+	houdini features (meshes)
+	Forbid render doc captures (or others)
+	example based synthesis http://forum.world-machine.com/index.php?topic=3331.0
+	
+Survey similar software:
+	substance designer features (grunge maps, patterns, etc)
+	Unity MapMagic - https://www.youtube.com/watch?v=BxqaYrRII5A - https://gitlab.com/denispahunov/mapmagic/wikis/home
+	http://lithosphere.codeflow.org/
+	geoglyph / TOR platform (http://daxpandhi.com/Blog/eue-2017 https://80.lv/articles/tor-platform-new-way-to-work-with-3d-landscapes/)
+	have a look at http://www.terraincomposer.com/
+
+Optims:
+	pack shader constants tighter
+	multi gpu acceleration (dx12 ? openCL ?)
+	
+erosion :
+	-"Fast Hydraulic Erosion Simulation and Visualization on GPU""
+	-"Fast Hydraulic and Thermal Erosion on the GPU" (this paper improves on the 1st one)
+	- https://www.digital-dust.com/single-post/2017/03/20/Interactive-erosion-in-Unity
+	- https://pdfs.semanticscholar.org/e9a3/5369477c67e67e350068e284cf9e31a080b5.pdf
+	- https://hal.inria.fr/hal-01262376/file/2016_cordonnier.pdf
+	- https://github.com/karhu/terrain-erosion
+	- VERY promising paper https://hal.archives-ouvertes.fr/hal-01518967/file/authoring-landscapes-combining.pdf
+	- output "flowmap"
+	-pseudo-erosion https://github.com/smcameron/pseudo-erosion & https://www.reddit.com/r/proceduralgeneration/comments/797fgw/iterative_pseudoerosion/
+
+Noise improvements:
+	simplex noise
+	noise generators https://engineering.purdue.edu/~ebertd/texture/1stEdition/musgrave/musgrave.c
+	http://www.iquilezles.org/www/articles/morenoise/morenoise.htm
+
+business/e-commerce/legal:
+	https://www.nopcommerce.com

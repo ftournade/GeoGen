@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="UI">
+      <UniqueIdentifier>{f74ec40d-09e2-44da-81b5-5ba7ed6d58c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Compute nodes">
+      <UniqueIdentifier>{993ed07b-e6ea-4545-a47f-2e89030323da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Properties">
+      <UniqueIdentifier>{dae85023-ed21-4980-b236-d0c022f9f328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Main">
+      <UniqueIdentifier>{18b55377-f23b-4d70-9d48-fcd43b3893d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Preview">
+      <UniqueIdentifier>{e8b71ffe-253e-461d-a79a-1cea17a3706d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Node editor">
+      <UniqueIdentifier>{5900aea6-9a9d-4276-81b8-2f0dbf2b91f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Preview\Render">
+      <UniqueIdentifier>{a5223923-d609-43cf-a8a6-4cb4f54d9f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\DEMGrab">
+      <UniqueIdentifier>{b7a6bbc4-a5df-4156-b893-31ef3ee2c61f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OutputWnd.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ComputeNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomComputeNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicComputeNodes.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="GridMesh.h">
+      <Filter>UI\Preview\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertiesWnd.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatSliderProperty.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomSlider.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="BoolProperty.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoGen.h">
+      <Filter>UI\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>UI\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="PreviewWnd.h">
+      <Filter>UI\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeEditor.h">
+      <Filter>UI\Node editor</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeEditorView.h">
+      <Filter>UI\Node editor</Filter>
+    </ClInclude>
+    <ClInclude Include="MinstrelNoiseNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeFactory.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputBitmapNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsDlg.h">
+      <Filter>UI\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ErosionNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ErosionConstants.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUFloatMap.h" />
+    <ClInclude Include="RandomPick.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="PreviewNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="DEMGrabFrm.h">
+      <Filter>UI\DEMGrab</Filter>
+    </ClInclude>
+    <ClInclude Include="DEMGrabView.h">
+      <Filter>UI\DEMGrab</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTPConnection.h" />
+    <ClInclude Include="InputBitmapNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="DownloadDEMDlg.h">
+      <Filter>UI\DEMGrab</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPickerDlg.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Utils.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractDetailNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorGradientNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorGradientDlg.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="ScatterMapNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Noise.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="CurveNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="CurveEditorDlg.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="SnowNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="MonteCarloErosionNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="MonteCarloErosionNodeCPU.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\MonteCarloErosionConstants.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainTileProviderSetupDlg.h">
+      <Filter>UI\DEMGrab</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OutputWnd.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ComputeNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomComputeNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicComputeNodes.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="GridMesh.cpp">
+      <Filter>UI\Preview\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertiesWnd.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatSliderProperty.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomSlider.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="BoolProperty.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoGen.cpp">
+      <Filter>UI\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>UI\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="PreviewWnd.cpp">
+      <Filter>UI\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeEditor.cpp">
+      <Filter>UI\Node editor</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeEditorView.cpp">
+      <Filter>UI\Node editor</Filter>
+    </ClCompile>
+    <ClCompile Include="MinstrelNoiseNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeFactory.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputBitmapNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsDlg.cpp">
+      <Filter>UI\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ErosionNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUFloatMap.cpp" />
+    <ClCompile Include="PreviewNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="DEMGrabFrm.cpp">
+      <Filter>UI\DEMGrab</Filter>
+    </ClCompile>
+    <ClCompile Include="DEMGrabView.cpp">
+      <Filter>UI\DEMGrab</Filter>
+    </ClCompile>
+    <ClCompile Include="HTTPConnection.cpp" />
+    <ClCompile Include="InputBitmapNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="DownloadDEMDlg.cpp">
+      <Filter>UI\DEMGrab</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPicker.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPickerDlg.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractDetailNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorGradientNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorGradientDlg.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="ScatterMapNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="CurveNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="CurveEditorDlg.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="SnowNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="MonteCarloErosionNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="MonteCarloErosionNodeCPU.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainTileProviderSetupDlg.cpp">
+      <Filter>UI\DEMGrab</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GeoGen.rc">
+      <Filter>UI\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\output_wnd.ico">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\output_wnd_hc.ico">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_wnd.ico">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_wnd_hc.ico">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\properties_hc.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="UserImages.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\GeoGen.ico">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar256.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\OnOff.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar_DEMGrabber.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+    <Image Include="res\Toolbar_DEMGrabber_256.bmp">
+      <Filter>UI\Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\GeoGen.rc2">
+      <Filter>UI\Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Terrain.hlsl">
+      <Filter>UI\Preview\Render</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\MinstrelNoise.hlsl">
+      <Filter>Compute nodes</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Erosion.hlsl">
+      <Filter>Compute nodes</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Blur.hlsl">
+      <Filter>Compute nodes</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\MonteCarloErosion.hlsl">
+      <Filter>Compute nodes</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
+  </ItemGroup>
+</Project>
