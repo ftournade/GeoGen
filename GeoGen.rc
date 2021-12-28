@@ -286,18 +286,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,117,111,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,42,111,50,14
-    LTEXT           "You need a key from NextZen to get elevation maps.",IDC_STATIC,7,7,230,8
-    LTEXT           "Get one free at",IDC_STATIC,7,18,50,8
-    EDITTEXT        IDC_EDIT_APIKEY,92,31,145,12,ES_AUTOHSCROLL
-    LTEXT           "MapZen APIKey",IDC_STATIC,7,33,51,8
-    PUSHBUTTON      "https://developers.nextzen.org",IDC_BUTTON_REGISTER_MAPZEN_APIKEY,92,17,145,12
-    LTEXT           "You need a key from Here.com to get color maps.",IDC_STATIC,7,50,230,8
-    LTEXT           "Get one paid or free at",IDC_STATIC,7,61,75,8
-    EDITTEXT        IDC_EDIT_HERE_APPID,92,74,145,12,ES_AUTOHSCROLL
-    LTEXT           "Here AppID",IDC_STATIC,7,76,38,8
-    PUSHBUTTON      "https://developer.here.com/plans",IDC_BUTTON_REGISTER_HERE_APIKEY,92,60,145,12
-    EDITTEXT        IDC_EDIT_HERE_APPCODE,92,89,145,12,ES_AUTOHSCROLL
-    LTEXT           "Here AppCode",IDC_STATIC,7,91,48,8
 END
 
 IDD_DLG_COLOR_RAMP DIALOGEX 0, 0, 182, 304
@@ -596,6 +584,13 @@ BEGIN
     PUSHBUTTON      "Delete",IDC_BUTTON_SAVE_PRESET2,281,7,28,12
 END
 
+IDD_DIALOG_RIVER_EDITOR DIALOGEX 0, 0, 309, 257
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Custom1",IDC_RIVER_EDITOR_CTRL,"RiverEditorCtrl",WS_TABSTOP,7,7,295,243
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -613,6 +608,14 @@ BEGIN
         BOTTOMMARGIN, 298
         HORZGUIDE, 19
     END
+
+    IDD_DIALOG_RIVER_EDITOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 250
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -623,6 +626,11 @@ END
 //
 
 IDD_DIALOG_CURVE_EDITOR AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_RIVER_EDITOR AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

@@ -60,6 +60,7 @@
 #define IDD_DLG_COLOR_RAMP              319
 #define IDD_DLG_COLOR_PICKER            320
 #define IDD_DIALOG_CURVE_EDITOR         321
+#define IDD_DIALOG_RIVER_EDITOR         324
 #define IDC_EDIT_RESOLUTION             1002
 #define IDC_EDIT_MIN_ALT                1003
 #define IDC_EDIT_COLORSAT_RESOLUTION    1003
@@ -89,6 +90,7 @@
 #define IDC_MFCBUTTON1                  1022
 #define IDC_BUTTON_SAVE_PRESET2         1023
 #define IDC_CUSTOM1                     1024
+#define IDC_RIVER_EDITOR_CTRL           1024
 #define IDC_CURVE_EDITOR_CTRL           1025
 #define IDC_COMBO_PRESETS               1026
 #define ID_SETTINGS                     32771
@@ -100,7 +102,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        324
+#define _APS_NEXT_RESOURCE_VALUE        326
 #define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           310

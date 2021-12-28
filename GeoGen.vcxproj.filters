@@ -167,6 +167,12 @@
     <ClInclude Include="TerrainTileProviderSetupDlg.h">
       <Filter>UI\DEMGrab</Filter>
     </ClInclude>
+    <ClInclude Include="MountainNode.h">
+      <Filter>Compute nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="RiverEditorDlg.h">
+      <Filter>UI\Properties</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OutputWnd.cpp">
@@ -283,6 +289,12 @@
     <ClCompile Include="TerrainTileProviderSetupDlg.cpp">
       <Filter>UI\DEMGrab</Filter>
     </ClCompile>
+    <ClCompile Include="MountainNode.cpp">
+      <Filter>Compute nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="RiverEditorDlg.cpp">
+      <Filter>UI\Properties</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GeoGen.rc">
@@ -349,6 +361,9 @@
       <Filter>Compute nodes</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\MonteCarloErosion.hlsl">
+      <Filter>Compute nodes</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Mountain.hlsl">
       <Filter>Compute nodes</Filter>
     </FxCompile>
   </ItemGroup>

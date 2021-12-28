@@ -221,6 +221,7 @@
     <ClInclude Include="MinstrelNoiseNode.h" />
     <ClInclude Include="MonteCarloErosionNode.h" />
     <ClInclude Include="MonteCarloErosionNodeCPU.h" />
+    <ClInclude Include="MountainNode.h" />
     <ClInclude Include="NodeEditor.h" />
     <ClInclude Include="NodeEditorView.h" />
     <ClInclude Include="NodeFactory.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RandomPick.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RiverEditorDlg.h" />
     <ClInclude Include="ScatterMapNode.h" />
     <ClInclude Include="SettingsDlg.h" />
     <ClInclude Include="Shaders\ErosionConstants.h" />
@@ -275,6 +277,7 @@
     <ClCompile Include="MinstrelNoiseNode.cpp" />
     <ClCompile Include="MonteCarloErosionNode.cpp" />
     <ClCompile Include="MonteCarloErosionNodeCPU.cpp" />
+    <ClCompile Include="MountainNode.cpp" />
     <ClCompile Include="NodeEditor.cpp" />
     <ClCompile Include="NodeEditorView.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
@@ -284,6 +287,7 @@
     <ClCompile Include="PreviewNode.cpp" />
     <ClCompile Include="PreviewWnd.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
+    <ClCompile Include="RiverEditorDlg.cpp" />
     <ClCompile Include="ScatterMapNode.cpp" />
     <ClCompile Include="SettingsDlg.cpp" />
     <ClCompile Include="SnowNode.cpp" />
@@ -341,6 +345,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\MonteCarloErosion.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\Mountain.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

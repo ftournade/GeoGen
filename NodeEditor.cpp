@@ -6,6 +6,7 @@
 
 #include "BasicComputeNodes.h"
 #include "MinstrelNoiseNode.h"
+#include "MountainNode.h"
 #include "InputBitmapNode.h"
 #include "OutputBitmapNode.h"
 #include "ErosionNode.h"
@@ -68,6 +69,7 @@ bool NodeEditor::Init()
 	REGISTER_COMPUTE_NODE( PerlinNoiseNode, Generator, "Perlin Noise", 10 );
 	REGISTER_COMPUTE_NODE( VoronoiseNode, Generator, "Voronoise", 11 );
 	REGISTER_COMPUTE_NODE( VoronoiNode, Generator, "Voronoi", 12 );
+	REGISTER_COMPUTE_NODE( MountainNode, Generator, "Mountain", 13 );
 //	REGISTER_COMPUTE_NODE( CustomComputeNode, "Custom HLSL", 3 );
 	REGISTER_COMPUTE_NODE( RadialNode, Generator, "Radial", 14 );
 	REGISTER_COMPUTE_NODE( GradientNode, Generator, "Gradient", 15 );
@@ -432,12 +434,12 @@ void NodeEditor::DrawWithD3D11( const CRect& _screenRect )
 void NodeEditor::DrawWithMFC( const CRect& _screenRect, CDC* _dc )
 {
 	UIRect screenRect;
-	screenRect.Pos.x = _screenRect.left;
-	screenRect.Pos.y = _screenRect.top;
-	screenRect.Size.x = _screenRect.Width();
-	screenRect.Size.y = _screenRect.Height();
+	screenRect.Pos.x = (float)_screenRect.left;
+	screenRect.Pos.y = (float)_screenRect.top;
+	screenRect.Size.x = (float)_screenRect.Width();
+	screenRect.Size.y = (float)_screenRect.Height();
 
-	Vec2 center( _screenRect.CenterPoint().x, _screenRect.CenterPoint().y );
+	Vec2 center( (float)_screenRect.CenterPoint().x, (float)_screenRect.CenterPoint().y );
 
 	_dc->FillSolidRect( &_screenRect, RGB( 50, 50, 50 ) );
 
@@ -491,8 +493,8 @@ void NodeEditor::DrawWithMFC( const CRect& _screenRect, CDC* _dc )
 		}
 
 		CRect resInfoRect( rect );
-		resInfoRect.top    += nodeRect.Size.y + 0.001f;
-		resInfoRect.bottom += nodeRect.Size.y + 0.001f;
+		resInfoRect.top    += (LONG)(nodeRect.Size.y + 0.001f);
+		resInfoRect.bottom += (LONG)(nodeRect.Size.y + 0.001f);
 
 		DrawShadowedText( resInfoTxt.c_str(), _dc, resInfoRect, DT_CENTER, (UINT)( 1.0f * m_viewZoom ) );
 
