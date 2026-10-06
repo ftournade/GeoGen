@@ -1,5 +1,3 @@
-namespace xtm
-{
 	template <class T>
 	inline void	BSphere<T>::Set( const TVec3<T>& _center, T _radius )
 	{
@@ -203,4 +201,3 @@ namespace xtm
 
 	}
 
-}

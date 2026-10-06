@@ -8,11 +8,14 @@ See README.md for features and build steps.
 - CMake only (`CMakeLists.txt` + `CMakePresets.json`): `cmake --preset vs2022`, then
   `cmake --build --preset release` (or `debug`). Generator is VS 2022, toolset v143, x64, and the
   build dir is `build/` (ignored by git). There are no tests and no CI.
-- **The build is intentionally incomplete.** Dependencies are limited to: Windows SDK system
-  libs (`d3d11`, `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`), TinyXml2 11.0.0 via `FetchContent`,
-  and the xtm/Core subset vendored in `Core/`. Don't add OpenSSL,
-  NVAPI, libjpeg, squish, LightZPNG or any out-of-repo path. SimpleD3DFramework (`g_Renderer`,
-  `D3DObject<T>`, `ConstantBuffer<T>`) is not in xtm and has no replacement yet.
+- Debug and Release both build. Dependencies are limited to: Windows SDK system libs (`d3d11`,
+  `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`), TinyXml2 11.0.0 via `FetchContent`, the xtm/Core
+  subset vendored in `Core/`, and `SimpleD3DFramework/`. Don't add OpenSSL, NVAPI, libjpeg, squish,
+  LightZPNG or any out-of-repo path. HTTPS (OpenSSL) code in `HTTPConnection.cpp` is commented out.
+- `SimpleD3DFramework/` (`Renderer`/`g_Renderer`, `D3DObject<T>`, `ConstantBuffer<T>`) is a
+  **recreation** written from GeoGen's usage; the original was lost. RenderDoc hooks are no-ops and
+  `RenderTarget` is only forward-declared. There's no `xtm` namespace any more, and `Str` is
+  `std::string`.
 - `Core/` is a subset of github.com/ftournade/xtm's `Core/`. It's compiled directly into the
   GeoGen executable (`SRC_CORE` list, same PCH and Unicode settings). Don't make it a separate
   library. `Core/xtm_prelude.h` replaces `Core/stdafx.h` (never include that). Local changes:

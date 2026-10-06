@@ -771,7 +771,7 @@ CBitmap* DEMGrabView::GetPreviewTile( int _x, int _y, int _zoom, int _resolution
 }
 
 
-xtm::Bitmap* DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution )
+Bitmap* DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution )
 {
 	CString terrariumCacheFilename, previewCacheFilename;
 
@@ -795,7 +795,7 @@ xtm::Bitmap* DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resol
 	}
 }
 
-xtm::Bitmap* DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution )
+Bitmap* DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution )
 {
 	CString colorSatCacheFilename;
 

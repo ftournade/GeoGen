@@ -9,14 +9,9 @@
 
 #include <Core/Utility.h> //For TSwap
 
-namespace xtm
-{
 	template <class T> class Plane;
 	//template <typename T> class TMat44;
-}
 
-namespace xtm
-{
 
 	template <typename T>
 	class TMat44
@@ -137,12 +132,9 @@ namespace xtm
 	template <typename T>
 	inline TVec4<T> operator*( const TVec4<T>& v, const TMat44<T>& m );
 
-}
 
 #include "Plane.h"
 
-namespace xtm
-{
 	#include "Mat44.inl"
 
 	//#pragma warning (disable : 4231)
@@ -243,6 +235,5 @@ namespace xtm
 		return _m;
 	}
 
-}
 
 #endif

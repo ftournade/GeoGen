@@ -3,8 +3,6 @@
 
 //Code from https://gist.github.com/martinkallman/5049614
 
-namespace xtm
-{
     // Fast single-precision to half-precision floating point conversion
     //  - Supports signed zero, denormals-as-zero (DAZ), flush-to-zero (FTZ),
     //    clamp-to-max
@@ -60,4 +58,3 @@ namespace xtm
         *((u32*)&out) = t1;
 		return out;
 	}
-}

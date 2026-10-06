@@ -1,7 +1,6 @@
 #pragma once
 
 
-using namespace xtm; //Bof ...
 extern Renderer g_Renderer; //tmp hack
 
 class GridMesh

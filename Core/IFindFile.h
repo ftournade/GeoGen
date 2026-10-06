@@ -3,8 +3,6 @@
 #include <Core/TVector.h>
 #include <Core/Str.h>
 
-namespace xtm
-{
 
 	struct FileInfo
 	{
@@ -66,4 +64,3 @@ namespace xtm
 	public:
 		Str m_Regex; //TODO real regex
 	};
-}

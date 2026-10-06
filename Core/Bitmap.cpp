@@ -41,8 +41,6 @@
 	#endif
 #endif
 
-namespace xtm
-{
 	Bitmap::Bitmap() :
 		m_pData(NULL),
 		m_Width(0),
@@ -2096,4 +2094,3 @@ namespace xtm
 		return Lerp( Lerp( t1, t2, fu ), Lerp( t3, t4, fu ), fv );
 	}
 
-}

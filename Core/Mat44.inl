@@ -783,7 +783,7 @@ bool TMat44<T>::UnitTest()
 	//Test inversion
 	TMat44 m1;
 	m1.MakePerspectiveProjection( DegToRad(80.0f), 0.75f, (T)1.0, 5000.0f );
-	TMat44 m2( xtm::Inverse( m1 ) );
+	TMat44 m2( Inverse( m1 ) );
 	TMat44 m3( m1 * m2 );
 
 	T error = UnitTestDiff( m3, TMat44<T>::Identity );

@@ -7,8 +7,8 @@ class ErosionNode;
 
 struct TerrainConstants //TODO Share HLSL/C++ struct
 {
-	xtm::Mat44 c_WorldViewMatrix;
-	xtm::Mat44 c_WorldViewProjMatrix;
+	Mat44 c_WorldViewMatrix;
+	Mat44 c_WorldViewProjMatrix;
 
 	float c_TerrainExtent;
 	uint32_t c_TerrainResolution;
@@ -45,7 +45,7 @@ protected:
 	void MoveCamera( const Vec3& _dir );
 
 private:
-	xtm::Camera m_Camera;
+	Camera m_Camera;
 
 	bool m_bRotatingView;
 	Vec2 m_LastMousePos;

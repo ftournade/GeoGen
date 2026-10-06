@@ -2,8 +2,6 @@
 
 #include <Core/IFindFile.h>
 
-namespace xtm
-{
 
 	class FileSystem
 	{
@@ -64,4 +62,3 @@ namespace xtm
 
 	IMPLEMENT_SINGLETON( FileSystem )
 
-}

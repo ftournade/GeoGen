@@ -3,8 +3,6 @@
 
 #include "StandardLib.h"
 
-namespace xtm
-{
 
 	class IByteStream
 	{
@@ -58,6 +56,5 @@ namespace xtm
 
 
 
-}
 
 #endif

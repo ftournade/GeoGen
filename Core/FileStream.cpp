@@ -11,8 +11,6 @@
 	//#include <CoreFoundation/CFString.h>
 #endif
 
-namespace xtm
-{
 
 	FileStream::FileStream() :
 		FileHandle(NULL)
@@ -206,4 +204,3 @@ namespace xtm
 		return fileSize;
 	}
 
-}

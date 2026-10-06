@@ -4,16 +4,11 @@
 #include <Core/Debug.h>
 
 
-namespace xtm
-{
 	//template <class T> class TVec3;
 	template <class T> class TMat44;
 
 	//typedef TVec3<float> Vec3;
-}
 
-namespace xtm
-{
 
 	template <class T>
 	class Ray
@@ -43,11 +38,7 @@ namespace xtm
 	public:
 		TVec3<T> m_origin, m_dir;
 	};
-}
 
 #include "Mat44.h"
 
-namespace xtm
-{
 	#include "Ray.inl"
-}

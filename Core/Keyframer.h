@@ -3,8 +3,6 @@
 #include <Core/TVector.h>
 #include <algorithm> //for std:sort
 
-namespace xtm
-{
 	enum Interpolation
 	{
 		Corner, //LeftTangent == RightTangent == 0
@@ -258,4 +256,3 @@ namespace xtm
 		std::sort( m_Keys.begin(), m_Keys.end(), sortByTime );
 	}
 
-}

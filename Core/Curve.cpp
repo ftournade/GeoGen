@@ -1,8 +1,6 @@
 //#include "stdafx.h"
 #include "Curve.h"
 
-namespace xtm
-{
 
 	void Curve::EvaluateAll( u32 _numSubdiv, Vec3* _result ) const
 	{
@@ -151,4 +149,3 @@ namespace xtm
 
 	}
 
-}

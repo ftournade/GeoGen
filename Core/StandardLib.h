@@ -10,8 +10,6 @@
 //#include <stdarg.h>
 //#include <string.h>//MACOSX only ?
 
-namespace xtm
-{
 	
 	#ifndef SAFE_FREE
 		#define SAFE_FREE(ptr)	if(ptr) {free(ptr); ptr=0x0;}
@@ -96,7 +94,7 @@ namespace xtm
 
 		inline float Random()
 		{
-			return xtm::Random( m_Average - m_Variance, m_Average + m_Variance );
+			return ::Random( m_Average - m_Variance, m_Average + m_Variance );
 		}
 	};
 
@@ -160,7 +158,6 @@ namespace xtm
 	//E.g.: 2048 becomes "2.000 Kb"
 	void FormatSizeInBytes( size_t _size, char* _result, u32 _bufferSize );
 
-	void Sleep( float _timeInSeconds );
-}
+	void SleepSeconds( float _timeInSeconds );
 
 #endif

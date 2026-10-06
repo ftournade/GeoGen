@@ -6,8 +6,6 @@
 #include <Core/OBBox.h>
 #include <Core/BSphere.h>
 
-namespace xtm
-{
 
 	Camera::Camera() :
 		m_bCamPosDirty(true),
@@ -410,4 +408,3 @@ namespace xtm
 
 		SetViewMatrix( viewMatrix );
 	}
-}

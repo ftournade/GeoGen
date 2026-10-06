@@ -77,8 +77,8 @@ private:
 	bool			GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, CString& _terrariumCacheFilename, CString& _previewCacheFilename );
 	bool			GetColorSatTile( int _x, int _y, int _zoom, int _resolution, CString& _colorSatCacheFilename );
 	CBitmap*		GetPreviewTile( int _x, int _y, int _zoom, int _resolution );
-	xtm::Bitmap*	GetAltitudeTile( int _x, int _y, int _zoom, int _resolution );
-	xtm::Bitmap*	GetColorSatTile( int _x, int _y, int _zoom, int _resolution );
+	Bitmap*	GetAltitudeTile( int _x, int _y, int _zoom, int _resolution );
+	Bitmap*	GetColorSatTile( int _x, int _y, int _zoom, int _resolution );
 	
 	void ProcessPreviewTile( Bitmap& _bmp );
 

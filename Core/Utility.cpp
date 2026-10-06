@@ -3,8 +3,6 @@
 #include "Utility.h"
 #include "StandardLib.h"
 
-namespace xtm
-{
 
 	//"Jenkins One-at-a-time hash" from Bob Jenkins
 
@@ -91,4 +89,3 @@ namespace xtm
 		*_out = _temp1;
 	}
 
-}

@@ -153,7 +153,7 @@ void MountainNode::InternalCompute()
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
 
 	//	ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
-	//	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	//	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	const uint32_t threadGroupSizeX = 32;
 	const uint32_t threadGroupSizeY = 32;
@@ -197,8 +197,8 @@ void MountainNode::InternalCompute()
 	}
 
 	pDevCtx->CSSetShader( m_CS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	m_CB.Resolution = GetResolution();
 	m_CB.MoutainSlope = m_ParameterSlots[0].m_Value.f;
@@ -211,9 +211,9 @@ void MountainNode::InternalCompute()
 
 	//Unbind everything
 	static ID3D11ShaderResourceView* nullSRVs[ 2 ] = { NULL };
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	static ID3D11UnorderedAccessView* nullUAVs[ 1 ] = { NULL };
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
 	
 }

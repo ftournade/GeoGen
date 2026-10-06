@@ -13,8 +13,6 @@
 	#include <unistd.h>
 #endif
 
-namespace xtm
-{
 	struct ThreadParameters
 	{
 		//...
@@ -129,5 +127,4 @@ namespace xtm
         #endif
     }
 
-}
 

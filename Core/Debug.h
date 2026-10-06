@@ -5,8 +5,6 @@
 
 #include <stdio.h>
 
-namespace xtm
-{
 
 	bool DbgOpenCheckDialogBox(	const char* condition,
 											const char* msg,
@@ -15,7 +13,6 @@ namespace xtm
 											s32 line,
 											const char* function );
 
-}
 
 #undef BREAK
 
@@ -42,7 +39,7 @@ namespace xtm
 #define CHECK_MSG( condition, m ) \
 { \
 	static bool bDontBreak = false; \
-	if( !(condition) && !bDontBreak && xtm::DbgOpenCheckDialogBox( #condition, m, bDontBreak, __FILE__, __LINE__, __func__ ) )	\
+	if( !(condition) && !bDontBreak && DbgOpenCheckDialogBox( #condition, m, bDontBreak, __FILE__, __LINE__, __func__ ) )	\
 	{ BREAK } \
 }
 
@@ -53,7 +50,7 @@ namespace xtm
 	{ \
 		char _dbgBuffer[1024]; \
 		Xsnprintf( _dbgBuffer, 1024, m, val1 ); \
-		if( xtm::DbgOpenCheckDialogBox( #condition, _dbgBuffer, bDontBreak, __FILE__, __LINE__, __func__ ) ) \
+		if( DbgOpenCheckDialogBox( #condition, _dbgBuffer, bDontBreak, __FILE__, __LINE__, __func__ ) ) \
 		{ BREAK } \
 	} \
 }

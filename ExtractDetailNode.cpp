@@ -56,7 +56,7 @@ void ExtractDetailNode::InternalCompute()
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
 
 	ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
-	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 	
 	const uint32_t threadGroupSizeX = 32;
 	const uint32_t threadGroupSizeY = 32;
@@ -69,8 +69,8 @@ void ExtractDetailNode::InternalCompute()
 	ID3D11ShaderResourceView* srvsHoriz[] = { pInputMap->GetSRV() };
 
 	pDevCtx->CSSetShader( m_CSBlur, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavsHoriz ), uavsHoriz, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvsHoriz ), srvsHoriz );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavsHoriz ), uavsHoriz, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvsHoriz ), srvsHoriz );
 
 	m_CB.BlurRadius = m_ParameterSlots[ 0 ].m_Value.f;
 	m_CB.KernelSize = (int)( (float)GetResolution() * m_ParameterSlots[0].m_Value.f );
@@ -85,8 +85,8 @@ void ExtractDetailNode::InternalCompute()
 	ID3D11ShaderResourceView* srvsVert[] = { m_IntermediateOutput.GetSRV(), pInputMap->GetSRV() };
 
 	pDevCtx->CSSetShader( m_CSBlurAndSubtractFromOriginal, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavsVert ), uavsVert, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvsVert ), srvsVert );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavsVert ), uavsVert, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvsVert ), srvsVert );
 
 	TSwap( m_CB.BlurDir.x, m_CB.BlurDir.y );
 	m_CB.UploadToGPU( pDevCtx );
@@ -94,8 +94,8 @@ void ExtractDetailNode::InternalCompute()
 
 	//Unbind everything
 	static ID3D11ShaderResourceView* nullSRVs[ 2 ] = { NULL };
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	static ID3D11UnorderedAccessView* nullUAVs[ 1 ] = { NULL };
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
 }

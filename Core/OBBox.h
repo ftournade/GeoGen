@@ -8,8 +8,6 @@
 #include "AABBox.h"
 #include "Ray.h"
 
-namespace xtm
-{
 	template <class T> class AABBox;
 
 
@@ -54,6 +52,5 @@ namespace xtm
 
     #include "OBBox.inl"
 
-}
 
 #endif

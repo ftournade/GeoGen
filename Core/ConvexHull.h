@@ -4,8 +4,6 @@
 
 #include <Core/TVector.h>
 
-namespace xtm
-{
 	template <class T>
 	class ConvexHull
 	{
@@ -91,4 +89,3 @@ namespace xtm
 		return result;
 	}
 
-}

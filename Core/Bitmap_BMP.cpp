@@ -5,8 +5,6 @@
 
 //TODO strictly implement spec
 
-namespace xtm
-{
 
 	#pragma pack( push, 1 )
 
@@ -397,4 +395,3 @@ namespace xtm
 		return true;
 	}
 
-}

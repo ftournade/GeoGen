@@ -2,7 +2,4 @@
 
 #include "Plane.h"
 
-namespace xtm
-{
 	
-}

@@ -143,7 +143,7 @@ void CustomComputeNode::InternalCompute()
 		g_Renderer.GetBilinearMirrorSampler()
 	};
 
-	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	//Bind outputs
 	ID3D11UnorderedAccessView* uavs[ 8 ];

@@ -8,8 +8,6 @@
 #include "OBBox.h"
 #include "AABBox.h"
 
-namespace xtm
-{
 
 
 
@@ -29,4 +27,3 @@ namespace xtm
 		return stream;
 	}
 	*/
-}

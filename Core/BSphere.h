@@ -3,8 +3,6 @@
 #include <Core/Vec3.h>
 #include "Plane.h"
 
-namespace xtm
-{
 	template <class T> class OBBox;
 	template <class T> class AABBox;
 
@@ -46,7 +44,6 @@ namespace xtm
 
 	template class BSphere<float>;
 	template class BSphere<double>;
-}
 
 #include <Core/Mat44.h>
 #include <Core/Ray.h>

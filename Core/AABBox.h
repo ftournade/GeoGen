@@ -9,8 +9,6 @@
 
 #include <Core/Utility.h>
 
-namespace xtm
-{
 	template <class T>
 	class Ray;
 
@@ -75,6 +73,5 @@ namespace xtm
 	CStream& operator>>( CStream& stream, CAABBox& m );
 	CStream& operator<<( CStream& stream, const CAABBox& m );
 */
-}
 
 #endif

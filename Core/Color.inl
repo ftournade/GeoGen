@@ -47,10 +47,10 @@ inline D3DXCOLOR Color::ToD3DXCOLOR() const
 
 inline void	Color::Clamp()
 {
-	r = xtm::Clamp( r, 0.0f, 1.0f );
-	g = xtm::Clamp( g, 0.0f, 1.0f );
-	b = xtm::Clamp( b, 0.0f, 1.0f );
-	a = xtm::Clamp( a, 0.0f, 1.0f );
+	r = ::Clamp( r, 0.0f, 1.0f );
+	g = ::Clamp( g, 0.0f, 1.0f );
+	b = ::Clamp( b, 0.0f, 1.0f );
+	a = ::Clamp( a, 0.0f, 1.0f );
 }
 
 inline float& Color::operator[]( s32 _idx )

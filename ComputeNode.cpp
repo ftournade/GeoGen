@@ -317,7 +317,7 @@ int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType 
 }
 
 int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType _type, ParamEdition _edition,
-												const xtm::Color& _defaultColor, bool _invalidatesShader )
+												const Color& _defaultColor, bool _invalidatesShader )
 {
 	//TODO check no space(s) in _name
 

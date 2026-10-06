@@ -1,8 +1,6 @@
 //#include "stdafx.h"
 #include "IFindFile.h"
 
-namespace xtm
-{
 
 	bool FindFiles::OnFindFile( const FileInfo& _info )
 	{
@@ -56,4 +54,3 @@ namespace xtm
 		return true;
 	}
 		
-}

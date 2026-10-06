@@ -13,8 +13,6 @@
 	#pragma warning(disable:4311)
 #endif
 
-namespace xtm
-{
 	template < class T >
 	inline bool			IsEpsilonNull( T a )									{ return ( ( a > - (T)XTM_EPSILON ) && ( a < (T)XTM_EPSILON ) ); }
 
@@ -96,6 +94,5 @@ namespace xtm
 		while( !bSorted );
 		
 	}
-}
 
 #endif

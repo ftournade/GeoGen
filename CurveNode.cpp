@@ -149,9 +149,9 @@ void CurveNode::InternalCompute()
 	};
 
 	pDevCtx->CSSetShader( m_pComputeShader, nullptr, 0 );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
@@ -166,10 +166,10 @@ void CurveNode::InternalCompute()
 
 	//Unbind everything
 	static ID3D11ShaderResourceView* nullSRVs[ 2 ] = { NULL };
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	static ID3D11UnorderedAccessView* nullUAVs[ 1 ] = { NULL };
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
 
 }
 
@@ -187,7 +187,7 @@ bool CurveNode::Load( const tinyxml2::XMLElement* _xmlNode )
 	while( xmlKey )
 	{
 		float t = xmlKey->FloatAttribute( "t" );
-		xtm::Interpolation type = (xtm::Interpolation)xmlKey->IntAttribute( "Type" );
+		Interpolation type = (Interpolation)xmlKey->IntAttribute( "Type" );
 		
 		Vec2 key, leftTgt, rightTgt;
 		key.x = xmlKey->FloatAttribute( "KeyX" );

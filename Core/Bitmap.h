@@ -10,13 +10,8 @@
 #include <Core/DataFormats.h>
 #include <Core/Vec4.h>
 
-namespace xtm
-{
 	class Color;
-}
 
-namespace xtm
-{
 	#define BITMAP_ALIGNMENT 1 
 	//Some platform may need to align bitmap memory (e.g. XBox360)
 
@@ -182,6 +177,5 @@ namespace xtm
 		
 		bool			m_bIsCubeMap;
 	};
-}
 
 #endif

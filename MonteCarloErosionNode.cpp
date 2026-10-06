@@ -212,17 +212,17 @@ void MonteCarloErosionNode::ComputeTotalTerrainAltitude() const
 
 	pDevCtx->CSSetShader( m_pTotalTerrainAltituteCS, nullptr, 0 );
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 
 	//unbind everything
-	ID3D11UnorderedAccessView* nullUAVs[ countof( uavs ) ] = { nullptr };
-	ID3D11ShaderResourceView* nullSRVs[ countof( srvs ) ] = { nullptr };
+	ID3D11UnorderedAccessView* nullUAVs[ _countof( uavs ) ] = { nullptr };
+	ID3D11ShaderResourceView* nullSRVs[ _countof( srvs ) ] = { nullptr };
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 }
 
@@ -274,17 +274,17 @@ void MonteCarloErosionNode::InitSim()
 	
 	pDevCtx->CSSetShader( m_pInitSimCS, nullptr, 0 );
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 
 	//unbind everything
-	ID3D11UnorderedAccessView* nullUAVs[ countof( uavs ) ] = { nullptr };
-	ID3D11ShaderResourceView* nullSRVs[ countof( srvs ) ] = { nullptr };
+	ID3D11UnorderedAccessView* nullUAVs[ _countof( uavs ) ] = { nullptr };
+	ID3D11ShaderResourceView* nullSRVs[ _countof( srvs ) ] = { nullptr };
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	//------------
 
@@ -325,9 +325,9 @@ void MonteCarloErosionNode::SmoothSoil()
 	ID3D11SamplerState* samplers[] = { g_Renderer.GetPointClampSampler() };
 
 	pDevCtx->CSSetShader( m_pSmoothSoilCS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
@@ -378,9 +378,9 @@ void MonteCarloErosionNode::ComputeHydraulicEvents()
 	//ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
 
 	pDevCtx->CSSetShader( m_HydraulicCS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	//pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	//pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
@@ -413,9 +413,9 @@ void MonteCarloErosionNode::ComputeGravityEvents()
 	//ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
 
 	pDevCtx->CSSetShader( m_GravityCS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	//pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	//pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
@@ -439,8 +439,8 @@ void MonteCarloErosionNode::StepSim( bool _rebindResources, bool _unbindResource
 
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 }
 
 void MonteCarloErosionNode::InternalCompute()
@@ -473,8 +473,8 @@ bool MonteCarloErosionNode::RenderSimPreview( const GridMesh& _gridMesh )
 	ID3D11ShaderResourceView* vsSRVs[] = { m_HeightMap.GetSRV(), nullptr, nullptr,  m_SandMap.GetSRV(), nullptr };
 	ID3D11ShaderResourceView* psSRVs[] = { m_HeightMap.GetSRV(), nullptr, nullptr,  m_SandMap.GetSRV(), nullptr };
 
-	pDevCtx->VSSetShaderResources( 0, countof( vsSRVs ), vsSRVs );
-	pDevCtx->PSSetShaderResources( 0, countof( psSRVs ), psSRVs );
+	pDevCtx->VSSetShaderResources( 0, _countof( vsSRVs ), vsSRVs );
+	pDevCtx->PSSetShaderResources( 0, _countof( psSRVs ), psSRVs );
 
 
 	ID3D11SamplerState* sampler = g_Renderer.GetBilinearClampSampler();

@@ -4,7 +4,7 @@
 
 #define WM_COLORPICKER_CHANGED (WM_USER + 24)
 
-xtm::Vec2 PointUV( const CRect& r, CPoint p );
+Vec2 PointUV( const CRect& r, CPoint p );
 
 class ColorPickerControl :	public CWnd
 {
@@ -32,11 +32,11 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	xtm::Win32BackBuffer m_backBuffer;
+	Win32BackBuffer m_backBuffer;
 	CRect m_SliderRect[6], m_HueSatPickerRect;
 
 public:
-	xtm::Color m_Color;
+	Color m_Color;
 
 	int m_LeftButtonDownArea;
 };

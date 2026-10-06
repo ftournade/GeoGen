@@ -9,8 +9,6 @@
 #include "UIHelper.h"
 
 
-namespace xtm
-{
 
 	bool DbgOpenCheckDialogBox(	const char* cond,
 											const char* txt,
@@ -26,11 +24,11 @@ namespace xtm
 	#ifdef XTM_WIN32
 		const s32 winErrorSize = 256;
 
-		TCHAR winError[winErrorSize];
+		char winError[winErrorSize];
 
 		winError[0] = '\0';
 
-		FormatMessage(	FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+		FormatMessageA(	FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
 						GetUserDefaultLangID(), winError, winErrorSize, NULL );
 
 
@@ -77,5 +75,4 @@ namespace xtm
 		return false;
 	}
 
-}
 

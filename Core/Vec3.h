@@ -16,8 +16,6 @@
 #define DBG_CHECK_VEC3( v ) \
 	DBG_CHECK( v.IsValid() && (Abs(v.x)<DBG_MAX_FLOAT) && (Abs(v.y)<DBG_MAX_FLOAT) && (Abs(v.z)<DBG_MAX_FLOAT) )
 
-namespace xtm
-{
 	template <class T>	
 	class TVec3;
 
@@ -185,7 +183,6 @@ namespace xtm
 		return _v;
 	}
 
-}
 
 
 #endif

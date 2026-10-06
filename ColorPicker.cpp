@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ColorPicker.h"
 
-using namespace xtm;
 
 static const LPCTSTR ColorPickerWndClass = _T( "ColorPickerCtrl" );
 

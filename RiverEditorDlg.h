@@ -29,7 +29,7 @@ private:
 	void RecDraw( CDC* _pDC, const CRect& _rect, const shared_ptr< RiverNode >& _node );
 	bool RecHitTestRiverNodes( const CRect& _rect, const CPoint& _p, const shared_ptr< RiverNode >& _node, shared_ptr< RiverNode >& _hitNode );
 
-	xtm::Win32BackBuffer m_backBuffer;
+	Win32BackBuffer m_backBuffer;
 
 public:
 	shared_ptr< RiverNode >* m_ppRiverRoot;

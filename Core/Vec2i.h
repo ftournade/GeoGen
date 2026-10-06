@@ -1,8 +1,6 @@
 #pragma once
 
 
-namespace xtm
-{
 
 	class Vec2i
 	{
@@ -90,4 +88,3 @@ namespace xtm
 
 	};
 
-}

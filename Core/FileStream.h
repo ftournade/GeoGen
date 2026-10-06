@@ -14,8 +14,6 @@
 	#include <stdio.h>
 #endif
 
-namespace xtm
-{
 	    
 	class FileStream :	public IByteStream
 	{
@@ -62,6 +60,5 @@ namespace xtm
 
 	};
 
-}
 
 #endif

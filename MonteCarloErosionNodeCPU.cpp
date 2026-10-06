@@ -388,7 +388,7 @@ void MonteCarloErosionNodeCPU::StepSim( bool _rebindResources, bool _unbindResou
 		#pragma omp parallel for //there's no thread safety in this algorithm, but events should rarely overlap, and when they do it shouldn't be a big deal
 		for( int evt = 0; evt < numEventsPerStep; ++evt )
 		{
-			Vec2i p0( xtm::Random( 0, (int)GetResolution() - 1 ), Random( 0, (int)GetResolution() - 1 ) );
+			Vec2i p0( Random( 0, (int)GetResolution() - 1 ), Random( 0, (int)GetResolution() - 1 ) );
 
 			switch( randomEventPicker.PickRandomly() )
 			{
@@ -405,7 +405,7 @@ void MonteCarloErosionNodeCPU::StepSim( bool _rebindResources, bool _unbindResou
 	{
 		for( int evt = 0; evt < numEventsPerStep; ++evt )
 		{
-			Vec2i p0( xtm::Random( 0, (int)GetResolution() - 1 ), Random( 0, (int)GetResolution() - 1 ) );
+			Vec2i p0( Random( 0, (int)GetResolution() - 1 ), Random( 0, (int)GetResolution() - 1 ) );
 
 			switch( randomEventPicker.PickRandomly() )
 			{
@@ -529,7 +529,7 @@ bool MonteCarloErosionNodeCPU::RenderSimPreview( const GridMesh& _gridMesh )
 	pDevCtx->VSSetShaderResources( 0, 1, &heightSRV );
 
 	ID3D11ShaderResourceView* srvs[] = { m_HeightMap.GetSRV(), nullptr, m_BrockenRockMap.GetSRV(), nullptr, m_FlowMap.GetSRV() };
-	pDevCtx->PSSetShaderResources( 0, countof(srvs), srvs );
+	pDevCtx->PSSetShaderResources( 0, _countof(srvs), srvs );
 
 
 	ID3D11SamplerState* sampler = g_Renderer.GetBilinearClampSampler();

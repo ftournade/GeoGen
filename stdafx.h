@@ -71,6 +71,10 @@
 #include <Core/Vec2i.h>
 #include <Core/Win32BackBuffer.h>
 
+#include <SimpleD3DFramework/Renderer.h>
+
+#include "UIRect.h"
+
 #include <cassert>
 #include <memory>
 #include <vector>

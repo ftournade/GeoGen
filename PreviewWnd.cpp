@@ -325,7 +325,7 @@ void CPreviewWnd::Render()
 
 	ID3D11RenderTargetView* pBackBufferRTV = g_Renderer.GetBackBufferRTV();
 
-	//	FLOAT clearColor[] = { xtm::Random(), xtm::Random(), xtm::Random(), 1.0f };
+	//	FLOAT clearColor[] = { Random(), Random(), Random(), 1.0f };
 	FLOAT clearColor[] = { 0.5f, 0.5f, 0.95f, 1.0f };
 	pDevCtx->ClearRenderTargetView( pBackBufferRTV, clearColor );
 	pDevCtx->ClearDepthStencilView( g_Renderer.GetZBufferDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );

@@ -3,13 +3,8 @@
 #include <Core/Color.h>
 #include <Core/Vec3.h>
 
-namespace xtm
-{
 	class Bitmap;
-}
 
-namespace xtm
-{
 
 	class Win32BackBuffer
 	{
@@ -82,4 +77,3 @@ namespace xtm
 		*pPixel   = (u8)(_col.x * 255.0f);
 	}
 
-}

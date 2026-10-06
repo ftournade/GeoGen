@@ -4,8 +4,6 @@
 //#include <Core/Plane.h>
 //#include <Core/Log.h>
 
-namespace xtm
-{
 	/*
 	template <class T>
 	TMat44<T>::TMat44(const char* _text)
@@ -37,4 +35,3 @@ namespace xtm
 			&_41, &_42, &_43, &_44);
 
 	}
-}

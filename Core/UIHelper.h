@@ -4,8 +4,6 @@
 #include "TList.h"
 #include "Str.h"
 
-namespace xtm
-{
 #ifdef XTM_WIN32
 	HINSTANCE GetAppInstance();
 	void SetAppInstance( HINSTANCE hInst );
@@ -50,4 +48,3 @@ namespace xtm
 
 	bool CreateSimpleMessageBox( CREATESIMPLEMESSAGEBOX& csmb, s32 width, s32 height );
 
-}

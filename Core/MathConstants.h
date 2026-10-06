@@ -1,7 +1,5 @@
 #pragma once
 
-namespace xtm
-{
 	//Unless specified otherwise, all constants are in S.I. units ( meter, second, kilogram, liter ) etc
 
 	//Base mathematic constants
@@ -30,5 +28,4 @@ namespace xtm
 	const double c_SunRadius = 6462650000.0; //m
 	const double c_SunEarthDistance = 149597900000.0; //m
 
-}
 

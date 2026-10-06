@@ -192,7 +192,7 @@ bool ScatterMapNode::CompileShaders()
 		{ "INTENSITY", 0, DXGI_FORMAT_R32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	if( !g_Renderer.GetDevice()->CreateInputLayout( inputLayoutDesc, countof( inputLayoutDesc ), pCompiledVS->GetBufferPointer(), pCompiledVS->GetBufferSize(), &m_InputLayout ) )
+	if( !g_Renderer.GetDevice()->CreateInputLayout( inputLayoutDesc, _countof( inputLayoutDesc ), pCompiledVS->GetBufferPointer(), pCompiledVS->GetBufferSize(), &m_InputLayout ) )
 		return false;
 
 	pCompiledVS->Release();
@@ -437,10 +437,10 @@ void ScatterMapNode::InternalCompute()
 	pDevCtx->PSSetShader( m_PS, nullptr, 0 );
 
 	ID3D11ShaderResourceView* srvs[] = { pInputMap->GetSRV(), pInputMask->GetSRV() };
-	pDevCtx->PSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->PSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearSampler() };
-	pDevCtx->PSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->PSSetSamplers( 0, _countof( samplers ), samplers );
 
 	pDevCtx->IASetInputLayout( m_InputLayout );
 
@@ -461,6 +461,6 @@ void ScatterMapNode::InternalCompute()
 	static ID3D11ShaderResourceView* nullSRVs[2] = { nullptr };
 
 	pDevCtx->OMSetRenderTargets( 1, &nullRTV, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 }

@@ -42,7 +42,7 @@ inline uint32_t RandomPick<MaxItemCount>::PickRandomly() const
 {
 	assert( m_ItemCount > 0 );
 
-	float rnd = xtm::Random( 0.0f, m_Probabilitysum * 0.999999f );
+	float rnd = Random( 0.0f, m_Probabilitysum * 0.999999f );
 	
 	float sum = 0.0f;
 

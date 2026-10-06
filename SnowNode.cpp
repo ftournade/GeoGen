@@ -159,8 +159,8 @@ void SnowNode::AddSnowAndTerrain() const
 
 	pDevCtx->CSSetShader( m_pTerrainPlusSnowCS , nullptr, 0 );
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 
@@ -169,8 +169,8 @@ void SnowNode::AddSnowAndTerrain() const
 	ID3D11ShaderResourceView* nullSRVs[ 2 ] = { nullptr };
 
 	pDevCtx->CSSetShader( m_CS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 }
 
@@ -209,17 +209,17 @@ void SnowNode::InitSim()
 
 	pDevCtx->CSSetShader( m_pInitSimCS, nullptr, 0 );
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 
 	//unbind everything
-	ID3D11UnorderedAccessView* nullUAVs[ countof( uavs ) ] = { nullptr };
-	ID3D11ShaderResourceView* nullSRVs[ countof( srvs ) ] = { nullptr };
+	ID3D11UnorderedAccessView* nullUAVs[ _countof( uavs ) ] = { nullptr };
+	ID3D11ShaderResourceView* nullSRVs[ _countof( srvs ) ] = { nullptr };
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	//------------
 
@@ -259,9 +259,9 @@ void SnowNode::SmoothSnow()
 	ID3D11SamplerState* samplers[] = { g_Renderer.GetPointClampSampler() };
 
 	pDevCtx->CSSetShader( m_pSmoothSnowCS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	m_CB.Seed = (float)m_Step * 31.2783f;
 	m_CB.TalusAngle = m_ParameterSlots[ m_ParamTalusAngle ].m_Value.f;
@@ -293,9 +293,9 @@ void SnowNode::StepSim( bool _rebindResources, bool _unbindResourcesOnExit )
 	//ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
 
 	pDevCtx->CSSetShader( m_CS, nullptr, 0 );
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( uavs ), uavs, nullptr );
-//	pDevCtx->CSSetShaderResources( 0, countof( srvs ), srvs );
-	//pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( uavs ), uavs, nullptr );
+//	pDevCtx->CSSetShaderResources( 0, _countof( srvs ), srvs );
+	//pDevCtx->CSSetSamplers( 0, _countof( samplers ), samplers );
 
 	UpdateConstantBuffer();
 
@@ -309,13 +309,13 @@ void SnowNode::StepSim( bool _rebindResources, bool _unbindResourcesOnExit )
 	ID3D11UnorderedAccessView* nullUAVs[8] = { nullptr };
 	ID3D11ShaderResourceView* nullSRVs[8] = { nullptr };
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-//	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+//	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	SmoothSnow();
 
-	pDevCtx->CSSetUnorderedAccessViews( 0, countof( nullUAVs ), nullUAVs, nullptr );
-//	pDevCtx->CSSetShaderResources( 0, countof( nullSRVs ), nullSRVs );
+	pDevCtx->CSSetUnorderedAccessViews( 0, _countof( nullUAVs ), nullUAVs, nullptr );
+//	pDevCtx->CSSetShaderResources( 0, _countof( nullSRVs ), nullSRVs );
 
 	++m_Step;
 }
@@ -350,8 +350,8 @@ bool SnowNode::RenderSimPreview( const GridMesh& _gridMesh )
 	ID3D11ShaderResourceView* vsSRVs[] = { m_HeightMap.GetSRV(), nullptr, nullptr,  m_SnowMap.GetSRV(), nullptr };
 	ID3D11ShaderResourceView* psSRVs[] = { m_HeightMap.GetSRV(), nullptr, nullptr,  m_SnowMap.GetSRV(), nullptr };
 
-	pDevCtx->VSSetShaderResources( 0, countof( vsSRVs ), vsSRVs );
-	pDevCtx->PSSetShaderResources( 0, countof( psSRVs ), psSRVs );
+	pDevCtx->VSSetShaderResources( 0, _countof( vsSRVs ), vsSRVs );
+	pDevCtx->PSSetShaderResources( 0, _countof( psSRVs ), psSRVs );
 
 
 	ID3D11SamplerState* sampler = g_Renderer.GetBilinearClampSampler();

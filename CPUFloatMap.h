@@ -18,14 +18,14 @@ public:
 
 	void operator=( const CPUFloatMap& _rhs );
 
-	const float& operator()( const xtm::Vec2i& p ) const
+	const float& operator()( const Vec2i& p ) const
 	{ 
 		assert( (p.x >= 0) && (p.x < (int)m_SX) );
 		assert( (p.y >= 0) && (p.y < (int)m_SY) );
 		return m_pData[ p.y * m_SX + p.x ];
 	}
 
-	float& operator()( const xtm::Vec2i& p )
+	float& operator()( const Vec2i& p )
 	{
 		assert( (p.x >= 0) && (p.x < (int)m_SX) );
 		assert( (p.y >= 0) && (p.y < (int)m_SY) );

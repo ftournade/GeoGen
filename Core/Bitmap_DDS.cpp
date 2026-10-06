@@ -6,8 +6,6 @@
 
 #include <d3d11.h> //TODO this is for DXGIFORMAT, but if we want to be cross-platform I'll need to duplicate DXGI_FORMAT enum
 
-namespace xtm
-{
 	#ifndef MAKEFOURCC
 		#define MAKEFOURCC(ch0, ch1, ch2, ch3)                 \
 			((u32)(byte)(ch0) | ((u32)(byte)(ch1) << 8) |       \
@@ -790,4 +788,3 @@ namespace xtm
 	}
 
 
-}

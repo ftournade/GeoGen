@@ -11,12 +11,12 @@
 #endif
 
 
-#define LOG		xtm::g_log.SetHTMLColor(0x00000000); xtm::g_log.printf
-#define LOG_R	xtm::g_log.SetHTMLColor(0x00ff0000); xtm::g_log.printf
-#define LOG_G	xtm::g_log.SetHTMLColor(0x00007f00); xtm::g_log.printf
+#define LOG		g_log.SetHTMLColor(0x00000000); g_log.printf
+#define LOG_R	g_log.SetHTMLColor(0x00ff0000); g_log.printf
+#define LOG_G	g_log.SetHTMLColor(0x00007f00); g_log.printf
 
-#define LOG_D3DERROR(str, hr)	xtm::g_log.SetHTMLColor(0x00ff0000);		\
-								xtm::g_log.printf( str ## " ( %s - %s )",	\
+#define LOG_D3DERROR(str, hr)	g_log.SetHTMLColor(0x00ff0000);		\
+								g_log.printf( str ## " ( %s - %s )",	\
 											DXGetErrorString(hr),			\
 											DXGetErrorDescription(hr) )	
 
@@ -114,8 +114,6 @@
 
 #endif
 
-namespace xtm
-{
 
 	class Log
 	{
@@ -148,4 +146,3 @@ namespace xtm
 
 	extern Log g_log;
 
-}

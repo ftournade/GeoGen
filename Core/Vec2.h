@@ -9,8 +9,6 @@
 #include <Core/Debug.h>
 #include <Core/Vec2i.h>
 
-namespace xtm
-{
 	template <class T>
 	class TVec2;
 
@@ -109,6 +107,5 @@ namespace xtm
 	typedef TVec2<float>	Vec2;
 	typedef TVec2<double>	Vec2d;
 
-}
 
 #endif

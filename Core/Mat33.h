@@ -6,8 +6,6 @@
 
 #include <Core/Utility.h> //For TSwap
 
-namespace xtm
-{
 	template <class T>
     class TMat33
     {
@@ -98,6 +96,5 @@ namespace xtm
 
 	typedef TMat33<float> Mat33;
 	typedef TMat33<double> Mat33d;
-}
 
 #endif

@@ -9,8 +9,6 @@
 
 #include <Core/Debug.h>
 
-namespace xtm
-{
 	//u32 xtmRandSeed = 69;
 	s32 xtmRandSeed = 69;
 
@@ -133,7 +131,7 @@ namespace xtm
 
 	}
 
-	void Sleep( float _timeInSeconds )
+	void SleepSeconds( float _timeInSeconds )
 	{
 		#if defined(XTM_IPHONE) || defined(XTM_LINUX) || defined(XTM_MACOSX)
 			//TODO on iPhone use [NSThread sleepForTimeInterval:(NSTimeInterval)_timeInSeconds ] ??
@@ -149,4 +147,3 @@ namespace xtm
 			#error "Implement Sleep"
 		#endif
 	}
-}

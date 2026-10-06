@@ -7,9 +7,7 @@
 //
 #include <Core/Debug.h>
 
-namespace xtm
-{
-#if 0
+#if 1 //GeoGen: Str is std::string (TStr kept below for reference)
 	typedef std::basic_string< char, std::char_traits<char>, std::allocator<char> > Str;
 #else
 
@@ -164,6 +162,5 @@ namespace xtm
 
 		return numReadBytes;
 	}
-}
 
 #endif //XTM_STRING_H

@@ -11,8 +11,6 @@
 #define XTM_2PI			(2.0f * 3.141592654f)
 #define XTM_PI_DOUBLE	3.1415926535897932384626433832795
 
-namespace xtm
-{
 	#ifdef XTM_WIN32
 		#define IsNan		_isnan
 		#define IsFinite	_finite
@@ -136,6 +134,5 @@ namespace xtm
 	}
 
 	
-}
 
 #endif

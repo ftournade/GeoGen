@@ -2,8 +2,6 @@
 
 #include <Core/Debug.h>
 
-namespace xtm
-{
 	u32 DataFormat::GetBitsPerPixel( Layout _layout )
 	{
 		static const u32 bpp[] =
@@ -375,4 +373,3 @@ namespace xtm
 	}
 #endif
 
-}

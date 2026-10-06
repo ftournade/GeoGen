@@ -15,8 +15,6 @@
 	#define CONVERT_COLOR( c ) (c).ToR8G8B8A8()
 #endif
 
-namespace xtm
-{
 
 	
 	class Color
@@ -86,6 +84,5 @@ namespace xtm
 	inline Color Modulate( const Color& _a, const Color& _b );
 
 	#include "Color.inl"
-}
 
 #endif

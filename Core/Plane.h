@@ -5,8 +5,6 @@
 #include "Vec3.h"
 #include "Ray.h"
 
-namespace xtm
-{
 
 	enum PlaneClassify
 	{
@@ -153,5 +151,4 @@ namespace xtm
 	CStream& operator>>( CStream& stream, Plane& p );
 	CStream& operator<<( CStream& stream, const Plane& p );
 	*/
-}
 

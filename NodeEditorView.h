@@ -45,7 +45,7 @@ public:
 
 private:
 
-	xtm::Win32BackBuffer m_backBuffer;
+	Win32BackBuffer m_backBuffer;
 
 	bool m_bDrawWithD3D11;
 	IDXGISwapChain* m_pD3D11SwapChain;

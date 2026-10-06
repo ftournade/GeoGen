@@ -6,8 +6,6 @@
 #include <Core/Vec2.h>
 #include <Core/Vec3.h>
 
-namespace xtm
-{
 //	template <typename T> class Vec2;
 	template <class T> class OBBox;
 	template <class T> class AABBox;
@@ -218,4 +216,3 @@ namespace xtm
 		return Vec3( (float)v._13, (float)v._23, (float)v._33 );
 	}
 
-}

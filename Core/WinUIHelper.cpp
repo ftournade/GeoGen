@@ -5,8 +5,6 @@
 
 #define SIMPLE_MESSAGE_BOX_BASE_BUTTON_INDEX 100
 
-namespace xtm
-{
 
 	static HINSTANCE g_hAppInstance = NULL;
 
@@ -239,4 +237,3 @@ namespace xtm
 		return true;
 	}
 
-}

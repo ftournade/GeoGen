@@ -2,8 +2,6 @@
 
 #include <Core/Bitmap.h>
 
-namespace xtm
-{
 
 	Win32BackBuffer::Win32BackBuffer() :
 		m_hBitmap(NULL),
@@ -142,4 +140,3 @@ namespace xtm
 	}
 
 
-}

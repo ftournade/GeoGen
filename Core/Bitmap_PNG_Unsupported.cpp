@@ -3,8 +3,6 @@
 
 #include <Core/Log.h>
 
-namespace xtm
-{
 
 	bool Bitmap::LoadPNG( const char* _filename )
 	{
@@ -12,4 +10,3 @@ namespace xtm
 		return false;
 	}
 
-}

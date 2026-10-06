@@ -95,6 +95,7 @@ set(SRC_UI_MAIN
 set(SRC_UI_NODE_EDITOR
 	NodeEditor.cpp				NodeEditor.h
 	NodeEditorView.cpp			NodeEditorView.h
+								UIRect.h
 )
 
 set(SRC_UI_PREVIEW
@@ -124,8 +125,10 @@ set(SRC_UI_DEMGRAB
 # Subset of xtm/Core (github.com/ftournade/xtm @ 81e8a648ad5d).
 # Local changes: Bitmap.cpp has JPG/DXT support disabled (libjpeg/squish not vendored),
 # Bitmap_PNG_Unsupported.cpp replaces Bitmap_PNG.cpp (LightZPNG not vendored),
-# xtm_prelude.h replaces Core/stdafx.h, DLLMain.h/CORE_API removed, and Win32 calls in
-# Log.cpp/UIHelper.h/WinUIHelper.cpp use explicit ANSI (...A) variants since GeoGen builds as Unicode.
+# xtm_prelude.h replaces Core/stdafx.h, DLLMain.h/CORE_API and the xtm namespace removed,
+# Str is std::string (Str.h switch), Sleep(float) renamed SleepSeconds (clashed with Win32 Sleep),
+# and Win32 calls in Debug.cpp/Log.cpp/UIHelper.h/WinUIHelper.cpp/Win32FileSystem.cpp use
+# explicit ANSI (...A) variants since GeoGen builds as Unicode.
 set(SRC_CORE
 	Core/AABBox.cpp				Core/AABBox.h				Core/AABBox.inl
 								Core/BasicTypes.h
@@ -167,8 +170,16 @@ set(SRC_CORE
 	Core/Vec3.cpp				Core/Vec3.h					Core/Vec3.inl
 	Core/Vec4.cpp				Core/Vec4.h					Core/Vec4.inl
 	Core/Win32BackBuffer.cpp	Core/Win32BackBuffer.h
+	Core/Win32FileSystem.cpp
 	Core/WinUIHelper.cpp
 								Core/xtm_prelude.h
+)
+
+# Recreated from GeoGen's usage of the original (lost) SimpleD3DFramework
+set(SRC_SIMPLE_D3D_FRAMEWORK
+								SimpleD3DFramework/ConstantBuffer.h
+								SimpleD3DFramework/D3DObject.h
+	SimpleD3DFramework/Renderer.cpp	SimpleD3DFramework/Renderer.h
 )
 
 set(SRC_RESOURCES
@@ -200,6 +211,7 @@ source_group("UI\\Properties"		FILES ${SRC_UI_PROPERTIES})
 source_group("UI\\DEMGrab"			FILES ${SRC_UI_DEMGRAB})
 source_group("UI\\Resource Files"	FILES ${SRC_RESOURCES})
 source_group("Core"					FILES ${SRC_CORE})
+source_group("SimpleD3DFramework"	FILES ${SRC_SIMPLE_D3D_FRAMEWORK})
 
 set_source_files_properties(${SRC_SHADERS} TODO.txt PROPERTIES HEADER_FILE_ONLY ON)
 
@@ -214,6 +226,7 @@ add_executable(GeoGen WIN32
 	${SRC_UI_PROPERTIES}
 	${SRC_UI_DEMGRAB}
 	${SRC_CORE}
+	${SRC_SIMPLE_D3D_FRAMEWORK}
 	${SRC_RESOURCES}
 	TODO.txt
 )

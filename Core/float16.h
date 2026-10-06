@@ -1,7 +1,5 @@
 #pragma once
 
-namespace xtm
-{
 	class float16
 	{
 	public:
@@ -15,4 +13,3 @@ namespace xtm
 		u16 m_Value;
 	};
 
-}

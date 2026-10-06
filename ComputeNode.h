@@ -212,7 +212,7 @@ public:
 					int _defaultValue, int _min, int _max, bool _invalidatesShader = false );
 
 	int AddParam(	const char* _categoryName, const char* _name, IOType _type, ParamEdition _edition,
-					const xtm::Color& _defaultColor, bool _invalidatesShader = false );
+					const Color& _defaultColor, bool _invalidatesShader = false );
 
 	int AddParam(	const char* _categoryName, const char* _name, IOType _type, ParamEdition _edition,
 					bool _defaultValue, bool _invalidatesShader = false );

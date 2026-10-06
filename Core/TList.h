@@ -15,8 +15,6 @@
 	#include <list>
 #endif
 
-namespace xtm
-{
 	#if USE_STL_LIST
 		
 		#define TList std::list
@@ -479,6 +477,5 @@ namespace xtm
 
 	#endif
 
-}//namespace xtm
 
 #endif

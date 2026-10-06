@@ -6,8 +6,6 @@
 #include <Core/StandardMath.h>
 #include <Core/Vec3.h>
 
-namespace xtm
-{
 
 	template <class T> class TVec4;
 
@@ -100,6 +98,5 @@ namespace xtm
 
 	typedef TVec4<float>	Vec4;
 	typedef TVec4<double>	Vec4d;
-}
 
 #endif

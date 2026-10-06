@@ -28,7 +28,7 @@ public:
 
 	void OnCurveModified();
 private:
-	xtm::Win32BackBuffer m_backBuffer;
+	Win32BackBuffer m_backBuffer;
 
 public:
 	Keyframer< Vec2 > m_Curve;

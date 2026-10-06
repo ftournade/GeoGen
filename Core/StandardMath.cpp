@@ -1,8 +1,6 @@
 //#include "stdafx.h"
 #include "StandardMath.h"
 
-namespace xtm
-{
 	u32 Sqrti( u32 _i )
 	{
 		//TODO it may not be the fastest ...
@@ -56,5 +54,4 @@ namespace xtm
 		return ( p == _v );
 	}
 	
-}
 

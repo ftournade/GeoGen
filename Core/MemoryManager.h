@@ -40,8 +40,6 @@
 //			//No need to call 'pSurf->Release()'
 //			return false;
 // }
-namespace xtm
-{
 
 	template <class T>
 	class TAutoReleaser
@@ -52,7 +50,6 @@ namespace xtm
 		~TAutoReleaser() { if(m_ptr) m_ptr->Release(); }
 	};
 
-}
 
 //#undef XTM_USE_MEMORY_MANAGER //TEST
 
@@ -120,7 +117,7 @@ namespace xtm
 	private:
 
 		AllocBlock*				m_pBlockList;
-		xtm::CriticalSectionObject	m_LockBlockList;
+		CriticalSectionObject	m_LockBlockList;
 
 
 		char				m_comment[MEMMGR_COMMENT_SIZE];

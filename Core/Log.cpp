@@ -7,8 +7,6 @@
 
 //#include <Windows.h>
 
-namespace xtm
-{
 
     Log g_log;
 
@@ -101,4 +99,3 @@ namespace xtm
 		OutputCallback = cb;
 	}
 
-}

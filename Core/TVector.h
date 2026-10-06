@@ -17,8 +17,6 @@
 	#pragma warning(disable:4251)
 #endif
 
-namespace xtm
-{
 	#ifdef USE_STL_VECTOR
 
 		#define TVector std::vector
@@ -194,12 +192,9 @@ namespace xtm
 		return numReadBytes;
 	}
 
-}
 
 #ifndef USE_STL_VECTOR
 
-namespace xtm
-{
 
 	template< class T >
 	TVector<T>::TVector()
@@ -724,7 +719,6 @@ namespace xtm
 
 
 */
-}
 
 #endif
 

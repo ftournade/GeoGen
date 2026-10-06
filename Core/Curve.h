@@ -3,8 +3,6 @@
 #include <Core/Vec3.h>
 #include <Core/TVector.h>
 
-namespace xtm
-{
 
 	class Curve
 	{
@@ -53,4 +51,3 @@ namespace xtm
 
 	};
 
-}

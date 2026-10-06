@@ -8,8 +8,6 @@
 
 #include "Str.h"
 
-namespace xtm
-{
 
 	Str Format( const char* _format, ... )
 	{
@@ -310,5 +308,4 @@ namespace xtm
 
 		return lower;
 	}
-}
 

@@ -6,8 +6,6 @@
 	#include <d3d11.h> //for DXGI_FORMAT conversion
 #endif
 
-namespace xtm
-{
 
 	struct DataFormat
 	{
@@ -260,6 +258,5 @@ namespace xtm
 	//TODO Move in lib 3D ?
 	DXGI_FORMAT ConvertToDXGIFormat( DataFormat _format );
 #endif
-}
 
 #endif
