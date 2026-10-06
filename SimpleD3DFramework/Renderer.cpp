@@ -1,13 +1,83 @@
 #include "stdafx.h"
 #include "Renderer.h"
 
-#include <dxgi1_4.h>
+#include <dxgi1_6.h>
 
 #include <string>
 #include <vector>
 
+//Ask hybrid-graphics drivers (NVIDIA Optimus, AMD PowerXpress) to run this executable on the
+//dedicated GPU rather than the integrated one
+extern "C"
+{
+	__declspec(dllexport) DWORD NvOptimusEnablement = 1;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 namespace
 {
+	//Returns the high-performance hardware adapter, or nullptr to let D3D11 use the default one
+	D3DObject< IDXGIAdapter1 > FindHighPerformanceAdapter()
+	{
+		D3DObject< IDXGIFactory1 > pFactory;
+
+		if( FAILED( CreateDXGIFactory1( __uuidof( IDXGIFactory1 ), (void**)&pFactory ) ) )
+			return D3DObject< IDXGIAdapter1 >();
+
+		//Windows 10 1803+: let DXGI order adapters by performance
+		D3DObject< IDXGIFactory6 > pFactory6;
+
+		if( SUCCEEDED( pFactory->QueryInterface( __uuidof( IDXGIFactory6 ), (void**)&pFactory6 ) ) )
+		{
+			D3DObject< IDXGIAdapter1 > pAdapter;
+
+			for( UINT i = 0; SUCCEEDED( pFactory6->EnumAdapterByGpuPreference( i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof( IDXGIAdapter1 ), (void**)&pAdapter ) ); ++i )
+			{
+				DXGI_ADAPTER_DESC1 desc;
+
+				if( SUCCEEDED( pAdapter->GetDesc1( &desc ) ) && !( desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE ) )
+					return pAdapter;
+
+				pAdapter.Release();
+			}
+		}
+
+		//Fallback: hardware adapter with the most dedicated video memory
+		D3DObject< IDXGIAdapter1 > pBestAdapter;
+		SIZE_T bestDedicatedMemory = 0;
+		D3DObject< IDXGIAdapter1 > pAdapter;
+
+		for( UINT i = 0; pFactory->EnumAdapters1( i, &pAdapter ) != DXGI_ERROR_NOT_FOUND; ++i )
+		{
+			DXGI_ADAPTER_DESC1 desc;
+
+			if( SUCCEEDED( pAdapter->GetDesc1( &desc ) ) && !( desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE ) && desc.DedicatedVideoMemory > bestDedicatedMemory )
+			{
+				bestDedicatedMemory = desc.DedicatedVideoMemory;
+				pBestAdapter = pAdapter;
+			}
+
+			pAdapter.Release();
+		}
+
+		return pBestAdapter;
+	}
+
+	std::string GetAdapterName( IDXGIAdapter* _pAdapter )
+	{
+		DXGI_ADAPTER_DESC desc;
+
+		if( !_pAdapter || FAILED( _pAdapter->GetDesc( &desc ) ) )
+			return "unknown adapter";
+
+		char name[ 256 ];
+
+		if( !WideCharToMultiByte( CP_UTF8, 0, desc.Description, -1, name, sizeof( name ), nullptr, nullptr ) )
+			return "unknown adapter";
+
+		return name;
+	}
+
 	bool CreateSampler( ID3D11Device* _pDevice, D3D11_FILTER _filter, D3D11_TEXTURE_ADDRESS_MODE _addressMode, ID3D11SamplerState** _ppSampler )
 	{
 		D3D11_SAMPLER_DESC samplerDesc = {};
@@ -105,11 +175,16 @@ bool Renderer::Init( HWND _hWnd, bool _fullscreen, uint32_t _width, uint32_t _he
 	createFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
+	D3DObject< IDXGIAdapter1 > pAdapter = FindHighPerformanceAdapter();
+
+	//An explicit adapter requires D3D_DRIVER_TYPE_UNKNOWN
+	const D3D_DRIVER_TYPE driverType = pAdapter ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE;
+
 	HRESULT hr = E_FAIL;
 
 	for( int attempt = 0; attempt < 2 && FAILED( hr ); ++attempt )
 	{
-		hr = D3D11CreateDeviceAndSwapChain(	nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createFlags,
+		hr = D3D11CreateDeviceAndSwapChain(	pAdapter, driverType, nullptr, createFlags,
 											featureLevels, _countof( featureLevels ), D3D11_SDK_VERSION,
 											&swapChainDesc, &m_pSwapChain, &m_pDevice, nullptr, &m_pImmediateContext );
 
@@ -120,6 +195,16 @@ bool Renderer::Init( HWND _hWnd, bool _fullscreen, uint32_t _width, uint32_t _he
 	{
 		LOG_R( "D3D11CreateDeviceAndSwapChain failed, hr = 0x%08x", (unsigned int)hr );
 		return false;
+	}
+
+	{
+		D3DObject< IDXGIDevice > pDXGIDevice;
+		D3DObject< IDXGIAdapter > pUsedAdapter;
+
+		if( SUCCEEDED( m_pDevice->QueryInterface( __uuidof( IDXGIDevice ), (void**)&pDXGIDevice ) ) && SUCCEEDED( pDXGIDevice->GetAdapter( &pUsedAdapter ) ) )
+		{
+			LOG( "Using GPU: %s", GetAdapterName( pUsedAdapter ).c_str() );
+		}
 	}
 
 	if( !CreateBackBufferViews() || !CreateCommonResources() )
