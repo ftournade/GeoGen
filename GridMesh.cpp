@@ -42,13 +42,14 @@ bool GridMesh::CreateGrid( ID3D11Device* _pDevice, uint32_t _resolution )
 		{
 			uint32_t i = y * _resolution + x;
 
+			//Clockwise on screen when seen from above (front faces for D3D11_CULL_BACK)
 			m_Indices[ idx++ ] = i;
-			m_Indices[ idx++ ] = i + _resolution;
 			m_Indices[ idx++ ] = i + 1;
+			m_Indices[ idx++ ] = i + _resolution;
 
 			m_Indices[ idx++ ] = i + _resolution;
-			m_Indices[ idx++ ] = i + _resolution + 1;
 			m_Indices[ idx++ ] = i + 1;
+			m_Indices[ idx++ ] = i + _resolution + 1;
 		}
 	}
 
