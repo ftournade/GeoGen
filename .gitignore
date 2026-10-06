@@ -332,3 +332,8 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# CMake build directory
+/build/
+/out/
+CMakeUserPresets.json

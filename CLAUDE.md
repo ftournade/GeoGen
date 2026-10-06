@@ -1,25 +1,28 @@
 # CLAUDE.md
 
 GeoGen is an MFC + Direct3D 11 node-based procedural terrain generator (C++, Windows only).
-See README.md for features and the full build layout.
+See README.md for features and build steps.
 
 ## Build
 
-- Build `GeoGen.sln` with MSBuild/Visual Studio, **x64** (Debug or Release). There are no
-  tests, no CI and no CMake.
-- The project **only builds from inside the original source tree**. `GeoGen.vcxproj` and
-  `GeoGen.sln` use `../../Shared/...`, `../../Extern/...` and `../../Games/*.props`, and the
-  output goes to `../../../Build/`. On this machine that tree is `D:\Dev\Code` (the original
-  working copy is `D:\Dev\Code\Sandbox\GeoGen`, and the build output is `D:\Dev\Build`). A clone
-  anywhere else (e.g. `D:\Dev\YukaSoftware\GeoGen`) fails to resolve those dependencies.
-  Don't "fix" this by rewriting paths unless asked.
-- Include paths, `XTM_*` defines, forced include of `stdafx.h`, no exceptions and no RTTI
-  (`/EHs-c-`, `/GR-`), fast FP and AVX all come from `Games/*Config*.props`, not from the vcxproj.
-- Toolset is `v142`. Only VS2022 (v143) is installed here, so either pass
-  `/p:PlatformToolset=v143` or retarget.
-- Run with the working directory set to the project folder: shaders load from the relative
-  path `Shaders/*.hlsl` at runtime. The `.hlsl` files are `ExcludedFromBuild` in the vcxproj
-  and are never compiled offline.
+- CMake only (`CMakeLists.txt` + `CMakePresets.json`): `cmake --preset vs2022`, then
+  `cmake --build --preset release` (or `debug`). Generator is VS 2022, toolset v143, x64, and the
+  build dir is `build/` (ignored by git). There are no tests and no CI.
+- **The build is intentionally incomplete.** The CMake project must reference only files in
+  this repo plus Windows SDK system libs (`d3d11`, `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`).
+  Don't add OpenSSL, xtm/Core, SimpleD3DFramework, TinyXml2, NVAPI or any other out-of-repo
+  path. The C++ still includes `Core/*`, `Renderer.h`, `TinyXml2/*` and `openssl/*`, so it won't
+  compile until those are dealt with.
+- The source file list in `CMakeLists.txt` is explicit (no globbing). New `.cpp/.h` files
+  must be added to the matching `SRC_*` list, which also sets their IDE folder.
+- `stdafx.h` is the precompiled header (`target_precompile_headers`, which also force-includes it).
+  MFC is a shared DLL (`CMAKE_MFC_FLAG 2` + `_AFXDLL`), Unicode, and the entry point is
+  `/ENTRY:wWinMainCRTStartup`.
+- This machine's VS2022 install has ATL but **not MFC** for v143, so MSBuild stops with MSB8041
+  until the "C++ MFC for latest v143 build tools" component is installed.
+- Shaders load from the relative path `Shaders/*.hlsl` at runtime and are never compiled
+  offline (`HEADER_FILE_ONLY`). A post-build step copies `Shaders/` next to the exe, and the VS
+  debugger working directory is the repo root.
 
 ## Architecture
 
@@ -67,5 +70,6 @@ See README.md for features and the full build layout.
 
 ## Secrets
 
-`MakeVersion.bat` and `TODO.txt` contain hard-coded FTP credentials and API keys from the
-original author. Never copy them elsewhere, and never add new credentials to the repo.
+`TODO.txt` contains hard-coded API keys from the original author, and git history still
+contains FTP credentials from the deleted `MakeVersion.bat`. Never copy them elsewhere, and
+never add new credentials to the repo.

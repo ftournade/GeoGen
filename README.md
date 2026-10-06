@@ -30,76 +30,45 @@ Mapzen terrain tiles) and aerial imagery (HERE) so real terrain can be used as a
 
 - C++ / **MFC** (Visual Studio "MFC Application" with docking panes)
 - **Direct3D 11** compute/vertex/pixel shaders (HLSL in `Shaders/`, compiled at runtime)
-- **TinyXml2** for project files, **OpenSSL** for HTTPS tile downloads, **NVAPI** (x64)
-- Yuka's in-house libraries **xtm/Core** and **SimpleD3DFramework**, which are **not** part of this repo
+- **TinyXml2** for project files and **OpenSSL** for HTTPS tile downloads (used by the code, not provided by the build)
+- Yuka's in-house libraries **xtm/Core** and **SimpleD3DFramework** (used by the code, not part of this repo)
 
 ## Building
 
-> ⚠️ This repo can't be built on its own. It is one project inside a larger source tree,
-> and it uses relative paths to shared libraries, third-party SDKs and MSBuild property
-> sheets that live outside the repo.
+The project is built with **CMake** and the **Visual Studio 2022 (v143)** toolset.
+
+> ⚠️ **The build is currently incomplete.** The CMake project only links Windows SDK system
+> libraries. The source still includes headers from libraries that aren't in this repo
+> (`Core/*` and `Renderer.h` from Yuka's xtm/SimpleD3DFramework, `TinyXml2`, `openssl/*`),
+> so compilation fails until those dependencies are vendored or replaced.
 
 ### Requirements
 
 - Windows 10+
-- Visual Studio with the **Desktop development with C++** workload and **MFC**
-  (the project targets the **v142** / VS2019 toolset; with only VS2022 installed, retarget to v143)
-- Windows 10 SDK (`d3d11.lib`, `d3dcompiler.lib`, `dxgi.lib`)
-
-### Expected directory layout
-
-The `.sln`/`.vcxproj` reference everything relative to the project folder, so the project
-has to sit **two levels below** a code root that contains `Shared/`, `Extern/` and `Games/`.
-The original layout is:
-
-```
-<DevRoot>/
-├── Build/                         # output: GeoGen-<Config>-<Platform>.exe  (OutDir = ../../../Build/)
-├── Temp/Games/GeoGen/...          # intermediate files
-└── Code/
-    ├── D3D10 Config.props, VS2010_settings*.props
-    ├── Games/                     # "<Debug|Release> D3D10 <x32|x64> Config.props" (imported by GeoGen.vcxproj)
-    ├── Shared/
-    │   ├── xtm/Core/              # Core.vcxproj    (math, logging, bitmaps, strings...)
-    │   └── SimpleD3DFramework/    # SimpleD3DFramework.vcxproj (Renderer, D3DObject...)
-    ├── Extern/
-    │   ├── libjpeg/  Squish/  TinyXml2/  LightZPNG/
-    │   ├── OpenSSL/               # include/, x64/lib, x64/bin (1.1.x)
-    │   └── NVAPI/amd64/           # NVAPI64.lib
-    └── Sandbox/
-        └── GeoGen/                # <- this repository
-```
+- Visual Studio 2022 with the **Desktop development with C++** workload **and** the
+  *C++ MFC for latest v143 build tools (x86 & x64)* component (Individual components tab)
+- Windows 10/11 SDK (`d3d11.lib`, `dxgi.lib`, `d3dcompiler.lib`, `dxguid.lib`)
+- CMake 3.21+
 
 ### Steps
 
-1. Clone (or link) this repo to `<DevRoot>/Code/Sandbox/GeoGen`.
-2. Open `GeoGen.sln` in Visual Studio.
-3. Select **Release | x64** (or Debug | x64) and build. The solution also builds
-   `Core`, `SimpleD3DFramework`, `jpeg`, `squish`, `tinyxml2` and `LightZPNG`.
-4. The executable is written to `<DevRoot>/Build/GeoGen-Release-x64.exe`.
-
-Command-line equivalent (from a VS Developer prompt):
-
 ```bat
-msbuild GeoGen.sln /p:Configuration=Release /p:Platform=x64 /m
+cmake --preset vs2022
+cmake --build --preset release
 ```
+
+The first command generates `build/GeoGen.sln`. Use `--preset debug` for a debug build.
+The executable is written to `build/<Config>/GeoGen.exe`, and `Shaders/` is copied next
+to it after each build. You can also open `build/GeoGen.sln`, or open the folder directly
+in Visual Studio, which picks up `CMakePresets.json`.
 
 ### Running
 
-Shaders are loaded at runtime from the relative path `Shaders/`, so the **working
-directory must be the folder that contains `Shaders/`**. Visual Studio's default debugger
-working directory (`$(ProjectDir)`) handles this. For a standalone build, copy the
-`Shaders` folder next to the executable.
+Shaders are compiled at runtime from the relative path `Shaders/`, so the **working
+directory must contain `Shaders/`**. The generated Visual Studio project sets the debugger
+working directory to the repo root. A standalone run works from `build/<Config>/`.
 
-The OpenSSL 1.1 DLLs (`libssl-1_1-x64.dll`, `libcrypto-1_1-x64.dll`) must be on the
-`PATH` or next to the exe for the DEM Grabber to work. Logs are written to `log.html` in
-the working directory.
-
-### Packaging
-
-`MakeVersion.bat` asks for a version number, copies `Build/GeoGen-Release-x64.exe` and
-the `Shaders/` folder into `<DevRoot>/Packaging/GeoGen/Build_<version>/`, and zips the
-result with 7-Zip.
+Logs are written to `log.html` in the working directory.
 
 ## DEM Grabber setup
 
