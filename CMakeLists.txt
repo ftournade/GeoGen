@@ -29,6 +29,14 @@ set(GEOGEN_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/include"
 file(WRITE "${GEOGEN_GENERATED_INCLUDE_DIR}/TinyXml2/tinyxml2.h"
 	"#pragma once\n#include \"${tinyxml2_SOURCE_DIR}/tinyxml2.h\"\n")
 
+# stb_image (header-only, no CMake project): PNG/JPEG decoding in Core/Bitmap_STB.cpp
+FetchContent_Declare(stb
+	GIT_REPOSITORY	https://github.com/nothings/stb.git
+	GIT_TAG			2c980bb59875b0d32144a71867fbdebb2f77cd20
+	GIT_SHALLOW		FALSE
+)
+FetchContent_MakeAvailable(stb)
+
 # MFC as a shared DLL (Visual Studio generators read this flag; _AFXDLL is also defined below
 # so that non-VS generators such as Ninja behave the same way)
 set(CMAKE_MFC_FLAG 2)
@@ -124,7 +132,7 @@ set(SRC_UI_DEMGRAB
 
 # Subset of xtm/Core (github.com/ftournade/xtm @ 81e8a648ad5d).
 # Local changes: Bitmap.cpp has JPG/DXT support disabled (libjpeg/squish not vendored),
-# Bitmap_PNG_Unsupported.cpp replaces Bitmap_PNG.cpp (LightZPNG not vendored),
+# Bitmap_STB.cpp replaces Bitmap_PNG.cpp and implements LoadPNG/LoadJPG with stb_image,
 # xtm_prelude.h replaces Core/stdafx.h, DLLMain.h/CORE_API and the xtm namespace removed,
 # Str is std::string (Str.h switch), Sleep(float) renamed SleepSeconds (clashed with Win32 Sleep),
 # and Win32 calls in Debug.cpp/Log.cpp/UIHelper.h/WinUIHelper.cpp/Win32FileSystem.cpp use
@@ -135,7 +143,7 @@ set(SRC_CORE
 	Core/Bitmap.cpp				Core/Bitmap.h
 	Core/Bitmap_BMP.cpp
 	Core/Bitmap_DDS.cpp
-	Core/Bitmap_PNG_Unsupported.cpp
+	Core/Bitmap_STB.cpp
 	Core/BSphere.cpp			Core/BSphere.h				Core/BSphere.inl
 	Core/Camera.cpp				Core/Camera.h
 	Core/Color.cpp				Core/Color.h				Core/Color.inl
@@ -238,6 +246,7 @@ add_executable(GeoGen WIN32
 target_include_directories(GeoGen PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GEOGEN_GENERATED_INCLUDE_DIR}
+	${stb_SOURCE_DIR}
 )
 
 target_compile_definitions(GeoGen PRIVATE
@@ -265,7 +274,7 @@ target_compile_options(GeoGen PRIVATE
 )
 
 # ---------------------------------------------------------------------------------------------
-# Linking (Windows SDK system libraries only)
+# Linking
 # ---------------------------------------------------------------------------------------------
 
 target_link_libraries(GeoGen PRIVATE
@@ -274,7 +283,7 @@ target_link_libraries(GeoGen PRIVATE
 	dxgi
 	dxguid
 	d3dcompiler
-	ws2_32
+	winhttp
 )
 
 target_link_options(GeoGen PRIVATE

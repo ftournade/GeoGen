@@ -99,42 +99,8 @@ BOOL CSettingsDlg::OnInitDialog()
 void CSettingsDlg::OnBnClickedButtonSetupGeodataProvider()
 {
 	TerrainTileProviderSetupDlg dlg;
-
-	TCHAR apiKeyBuffer[64];
-
-	CRegKey cKey;
-
-	if( cKey.Open( HKEY_CURRENT_USER, _T( "Software\\GeoGen" ) ) == ERROR_SUCCESS )
-	{
-		ULONG len = 64;
-		if( cKey.QueryStringValue( _T( "MapZenAPIKey" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			dlg.m_MapZenAPIKey = apiKeyBuffer;
-
-		len = 64;
-		if( cKey.QueryStringValue( _T( "HereAppId" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			dlg.m_HereAppId = apiKeyBuffer;
-
-		len = 64;
-		if( cKey.QueryStringValue( _T( "HereAppCode" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			dlg.m_HereAppCode = apiKeyBuffer;
-
-	}
+	dlg.m_MapTilerAPIKey = TerrainTileProviderSetupDlg::LoadMapTilerAPIKey();
 
 	if( dlg.DoModal() == IDOK )
-	{
-
-		if( dlg.m_MapZenAPIKey.IsEmpty() )
-			return;
-
-		CRegKey cKey;
-		cKey.Create( HKEY_CURRENT_USER, _T( "Software\\GeoGen" ) );
-		cKey.SetStringValue( _T( "MapZenAPIKey" ),dlg. m_MapZenAPIKey );
-		cKey.SetStringValue( _T( "HereAppId" ), dlg.m_HereAppId );
-		cKey.SetStringValue( _T( "HereAppCode" ), dlg.m_HereAppCode );
-
-	}
-	else
-	{
-		return;
-	}
+		TerrainTileProviderSetupDlg::SaveMapTilerAPIKey( dlg.m_MapTilerAPIKey ); //an empty key clears it
 }

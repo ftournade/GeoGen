@@ -8,10 +8,10 @@ See README.md for features and build steps.
 - CMake only (`CMakeLists.txt` + `CMakePresets.json`): `cmake --preset vs2022`, then
   `cmake --build --preset release` (or `debug`). Generator is VS 2022, toolset v143, x64, and the
   build dir is `build/` (ignored by git). There are no tests and no CI.
-- Debug and Release both build. Dependencies are limited to: Windows SDK system libs (`d3d11`,
-  `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`), TinyXml2 11.0.0 via `FetchContent`, the xtm/Core
-  subset vendored in `Core/`, and `SimpleD3DFramework/`. Don't add OpenSSL, NVAPI, libjpeg, squish,
-  LightZPNG or any out-of-repo path. HTTPS (OpenSSL) code in `HTTPConnection.cpp` is commented out.
+- Debug and Release both build. Dependencies: Windows SDK system libs (`d3d11`, `dxgi`, `dxguid`,
+  `d3dcompiler`, `winhttp`), TinyXml2 11.0.0 and stb_image via `FetchContent`, the xtm/Core subset
+  vendored in `Core/`, and `SimpleD3DFramework/`. New third-party dependencies come in through
+  `FetchContent` at a pinned version, never through out-of-repo paths.
 - `SimpleD3DFramework/` (`Renderer`/`g_Renderer`, `D3DObject<T>`, `ConstantBuffer<T>`) is a
   **recreation** written from GeoGen's usage; the original was lost. RenderDoc hooks are no-ops and
   `RenderTarget` is only forward-declared. There's no `xtm` namespace any more, and `Str` is
@@ -19,8 +19,8 @@ See README.md for features and build steps.
 - `Core/` is a subset of github.com/ftournade/xtm's `Core/`. It's compiled directly into the
   GeoGen executable (`SRC_CORE` list, same PCH and Unicode settings). Don't make it a separate
   library. `Core/xtm_prelude.h` replaces `Core/stdafx.h` (never include that). Local changes:
-  JPG/DXT disabled in `Bitmap.cpp`, `Bitmap_PNG_Unsupported.cpp` instead of `Bitmap_PNG.cpp`,
-  and `DLLMain.h`/`CORE_API` removed. GeoGen gets the Core headers through `stdafx.h`.
+  DXT disabled in `Bitmap.cpp`, `Bitmap_STB.cpp` (PNG/JPEG loading with stb_image) instead of
+  `Bitmap_PNG.cpp` and the libjpeg `LoadJPG`, and `DLLMain.h`/`CORE_API` removed. GeoGen gets the Core headers through `stdafx.h`.
 - The source file list in `CMakeLists.txt` is explicit (no globbing). New `.cpp/.h` files
   must be added to the matching `SRC_*` list, which also sets their IDE folder.
 - `stdafx.h` is the precompiled header (`target_precompile_headers`, which also force-includes it).
@@ -45,8 +45,10 @@ See README.md for features and build steps.
   `_input0..N`, `_output0..N`, the params by name, and `MinAltitude`/`MaxAltitude`/`Extent`/`Resolution`.
 - Complex nodes (erosion, snow, blur, mountain, scatter, curve, gradient) subclass
   `ComputeNode` directly and load entry points via `g_Renderer.CreateShader("Shaders/X.hlsl", "Entry", ...)`.
-- `DEMGrabFrm`/`DEMGrabView` + `HTTPConnection` (raw sockets + OpenSSL) download elevation
-  and imagery tiles.
+- `DEMGrabFrm`/`DEMGrabView` download Web Mercator tiles through `HTTPConnection` (WinHTTP):
+  elevation from AWS Terrain Tiles (terrarium PNG, no key) and imagery from MapTiler Satellite
+  (JPEG, API key in `HKCU\Software\GeoGen\MapTilerAPIKey`, see `TerrainTileProviderSetupDlg`).
+  A streaming thread loads preview tiles, and tiles are cached in `Documents\GeoGen\`.
 
 ## Adding a node
 

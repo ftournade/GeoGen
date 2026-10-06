@@ -2,6 +2,7 @@
 
 
 // TerrainTileProviderSetupDlg dialog
+// Elevation tiles (AWS Terrain Tiles) need no key; satellite imagery (MapTiler) needs a free API key.
 
 class TerrainTileProviderSetupDlg : public CDialogEx
 {
@@ -11,6 +12,10 @@ public:
 	TerrainTileProviderSetupDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~TerrainTileProviderSetupDlg();
 
+	//MapTiler API key persisted in HKCU\Software\GeoGen (empty if not set)
+	static CString LoadMapTilerAPIKey();
+	static void SaveMapTilerAPIKey( const CString& _key );
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_APIKEY };
@@ -19,10 +24,9 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	afx_msg void OnClickedButtonRegisterMapZenAPIkey();
-	afx_msg void OnClickedButtonRegisterHereAPIkey();
+	afx_msg void OnClickedButtonGetMapTilerKey();
 	DECLARE_MESSAGE_MAP()
 public:
-	CString m_MapZenAPIKey, m_HereAppId, m_HereAppCode;
+	CString m_MapTilerAPIKey;
 
 };

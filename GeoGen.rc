@@ -279,13 +279,18 @@ BEGIN
     CONTROL         "Export ColorSat",IDC_CHECK_EXPORT_COLORSAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,57,65,8
 END
 
-IDD_DIALOG_APIKEY DIALOGEX 0, 0, 277, 132
+IDD_DIALOG_APIKEY DIALOGEX 0, 0, 277, 98
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "GeoData provider setup"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,117,111,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,42,111,50,14
+    LTEXT           "Elevation tiles come from AWS Terrain Tiles and need no key.",IDC_STATIC,7,7,263,8
+    LTEXT           "Satellite imagery needs a MapTiler API key (free plan, non-commercial use):",IDC_STATIC,7,24,263,8
+    EDITTEXT        IDC_EDIT_APIKEY,7,37,180,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Get a free key...",IDC_BUTTON_GET_MAPTILER_KEY,193,36,77,14
+    LTEXT           "Leave empty to download elevation only.",IDC_STATIC,7,54,263,8
+    DEFPUSHBUTTON   "OK",IDOK,166,77,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,220,77,50,14
 END
 
 IDD_DLG_COLOR_RAMP DIALOGEX 0, 0, 182, 304
@@ -384,10 +389,8 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
-        VERTGUIDE, 92
-        VERTGUIDE, 237
         TOPMARGIN, 7
-        BOTTOMMARGIN, 125
+        BOTTOMMARGIN, 91
     END
 
     IDD_DLG_COLOR_RAMP, DIALOG

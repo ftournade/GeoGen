@@ -1,8 +1,6 @@
 #pragma once
 
-#include "HTTPConnection.h"
-
-#include <list>
+#include <afxmt.h>
 
 class DEMGrabView : public CWnd
 {
@@ -28,6 +26,7 @@ public:
 protected:
 
 	afx_msg void OnPaint();
+	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
@@ -68,6 +67,12 @@ private:
 	void CreateTileNode( TileNode* _pParent, uint32_t _childIndex );
 	void AsyncLoadTileBitmap( TileNode* _pTileNode );
 
+	void StreamTiles(); //streaming thread main loop
+	void WaitForStreamingIdle(); //clears the streaming queue and waits for the tile in flight (if any)
+	void StopStreamingThread();
+
+	bool DownloadToCache( const CString& _url, const CString& _cacheFilename, const char* _providerName, int _x, int _y, int _zoom );
+
 	void DrawTile( CDC* _pDC, const CRect& _tileRect, TileNode* _pTileNode ) const;
 
 	void RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale, TileNode* _pTileNode,
@@ -95,9 +100,7 @@ private:
 	CString m_DEMCacheDir;
 	CString m_ColorSatCacheDir;
 
-	CString m_MapZenAPIKey;
-	CString m_HereAppId;
-	CString m_HereAppCode;
+	CString m_MapTilerAPIKey; //satellite imagery (elevation tiles need no key)
 
 	bool m_bLeftMouseButtonDown;
 	Vec2 m_LastMousePos;
@@ -105,10 +108,12 @@ private:
 	float m_Zoom;
 
 	CWinThread* m_pStreamingThread;
-	BOOL m_bStreamingThreadPaused; //TODO is there something directly in CWinThread that allows that query ?
+	CEvent m_StreamingWakeEvent;	//auto-reset, set when tiles are queued or the thread must stop
+	CEvent m_StreamingIdleEvent;	//manual-reset, set while no tile is being downloaded
+	bool m_bStopStreaming;			//protected by m_StreamingQueueCriticalSection
 
 	vector< TileNode* > m_StreamingQueue;
-	CCriticalSection m_StreamingQueueCriticalSection;
+	CCriticalSection m_StreamingQueueCriticalSection; //also protects TileNode::pBitmap
 
 	CRect m_CaptureRect;
 	TileNode* m_pRootNode;
@@ -121,8 +126,5 @@ private:
 	};
 		
 	PreviewMode m_PreviewMode;
-
-	HTTPConnection m_MapZenHttpConnection;
-	HTTPConnection m_HereDotComHttpConnection;
 };
 

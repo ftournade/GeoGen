@@ -1129,15 +1129,7 @@
 		return true;
 	}
 
-#else
-
-	bool Bitmap::LoadJPG( const char* _filename )
-	{
-		LOG_R( "Bitmap::LoadJPG - JPG loading is not supported (%s)", _filename );
-		return false;
-	}
-
-#endif
+#endif //GeoGen: otherwise LoadJPG is implemented with stb_image in Bitmap_STB.cpp
 
 	bool Bitmap::LoadTGA( const char* _filename )
 	{
@@ -1220,19 +1212,6 @@
 			case DataFormat::Layout::Layout_32_32_32_32: numChannels = 4; break;
 		}
 
-		Vec2 uv1( 0, 0 );
-		Vec2 uv2( 1, 1 );
-
-		uv1.x = -(float)_destOffsetX / (float)_destWidth;
-		uv1.y = -(float)_destOffsetY / (float)_destHeight;
-		uv2.x = (float)(-_destOffsetX + (s32)m_Width)  / (float)_destWidth;
-		uv2.y = (float)(-_destOffsetY + (s32)m_Height) / (float)_destHeight;
-
-		uv1.x = Saturate( uv1.x );
-		uv1.y = Saturate( uv1.y );
-		uv2.x = Saturate( uv2.x );
-		uv2.y = Saturate( uv2.y );
-
 		byte* pDstPixels;
 		u32 unused;
 
@@ -1247,8 +1226,10 @@
 			if( (Y < 0) || (Y >= (s32)m_Height) )
 				continue;
 
-			float v = (float)y / (float)(_destHeight - 1);
-			
+			//GeoGen: sample at the pixel center of the whole destination rect. The previous code remapped
+			//the clipped uv range onto the full rect, which stretched rects crossing the bitmap edges.
+			float v = ( (float)y + 0.5f ) / (float)_destHeight;
+
 			for( u32 x = 0 ; x < _destWidth ; ++x )
 			{
 				s32 X = (s32)x + _destOffsetX;
@@ -1256,9 +1237,9 @@
 				if( (X < 0) || (X >= (s32)m_Width) )
 					continue;
 
-				float u = (float)x / (float)(_destWidth - 1);
+				float u = ( (float)x + 0.5f ) / (float)_destWidth;
 
-				Vec2 uv( Lerp( uv1.x, uv2.x, u ), Lerp( uv1.y, uv2.y, v ) );
+				Vec2 uv( u, v );
 				//uv.y = 1.0f - uv.y; //TODO not sure why ...
 
 				Color c = _srcBitmap.PointSample( uv ); //TODO linear, bicubic ...

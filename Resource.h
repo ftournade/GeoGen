@@ -78,11 +78,8 @@
 #define IDC_CHECK_UNDERWATER            1013
 #define IDC_EDIT_APIKEY                 1014
 #define IDC_CHECK_EXPORT_COLORSAT       1014
-#define IDC_BUTTON_REGISTER_MAPZEN_APIKEY 1015
-#define IDC_EDIT_HERE_APPID             1016
-#define IDC_BUTTON_REGISTER_HERE_APIKEY 1017
+#define IDC_BUTTON_GET_MAPTILER_KEY     1015
 #define IDC_COLOR_RAMP_CTRL             1018
-#define IDC_EDIT_HERE_APPCODE           1018
 #define IDC_COLOR_PICKER_CTRL           1019
 #define IDC_BUTTON1                     1020
 #define IDC_BUTTON_SAVE_PRESET          1020

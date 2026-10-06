@@ -75,11 +75,20 @@ Logs are written to `log.html` in the working directory.
 
 ## DEM Grabber setup
 
-Downloading elevation and imagery tiles needs your own API keys, which you enter in the
-app's tile-provider setup dialog:
+The DEM Grabber (File menu) downloads Web Mercator tiles and caches them in
+`Documents\GeoGen\`:
 
-- Nextzen: <https://developers.nextzen.org>
-- HERE: <https://developer.here.com>
+- **Elevation:** [Terrain Tiles on AWS](https://registry.opendata.aws/terrain-tiles/)
+  (Mapzen/Tilezen "terrarium" tiles, zoom 0–15). Free and needs no key. Attribution is required;
+  the data sources are listed in the
+  [Tilezen documentation](https://github.com/tilezen/joerd/blob/master/docs/attribution.md).
+- **Satellite imagery:** [MapTiler](https://www.maptiler.com/cloud/) Satellite. It needs an API
+  key: the free plan is for non-commercial use and has a monthly request quota. Create a key at
+  <https://cloud.maptiler.com/account/keys/> and enter it in Settings > GeoData provider, or when
+  the grabber first asks for it. Without a key, only elevations are captured. Attribution:
+  "© MapTiler © OpenStreetMap contributors".
+
+The grabber view shows both attributions.
 
 ## Status
 

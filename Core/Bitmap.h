@@ -162,6 +162,8 @@
 	private:
 		bool Fill_Float( const Color& _c );
 
+		bool LoadWithSTBImage( const char* _filename ); //GeoGen: PNG/JPEG decoding (Bitmap_STB.cpp)
+
 
 	private:
 		u32				m_Width, 

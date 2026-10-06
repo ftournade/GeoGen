@@ -105,20 +105,10 @@ dialogs beyond where they touch nodes.
 
 ## Broken features and gaps
 
-22. **The DEM Grabber can't work as written:**
-    - the HTTP request never sends the terminating blank line (`HTTPConnection.cpp:251-252`), so
-      servers wait for more headers;
-    - `https://` URLs (Here.com) are sent as plain HTTP on port 80, with app_id/app_code in clear
-      text;
-    - MapZen shut down years ago.
-
-    The download code also has memory-safety bugs on network input: `GetHeaderLength` runs
-    `strstr` on a buffer that isn't NUL-terminated, and if no header end is found the -1 becomes
-    `headerLen = 0xFFFFFFFF`, giving a huge `memcpy`. A `recv` error reconnects without resending
-    the request, so it hangs. `tmpResult` is never freed.
-23. **Only `.bmp`, `.dds`, `.tga`, `.tif` and `.rawfp32` can be loaded.** PNG and JPG are stubbed
-    out, and the file picker only offers rawfp32 and bmp.
-24. **Minor gaps:**
+22. **The Input/Output Bitmap file picker only offers `.rawfp32` and `.bmp`**
+    (`PropertiesWnd.cpp`), although PNG and JPEG now load (stb_image). TGA loading is a stub
+    (`Bitmap::LoadTGA` returns false).
+23. **Minor gaps:**
     - min altitude >= max altitude isn't rejected, making `NormalizeTerrain` divide by zero;
     - `NodeEditor::Load` reads a `Version` attribute but `Save` writes `VersionMajor` /
       `VersionMinor`;

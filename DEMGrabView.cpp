@@ -7,6 +7,8 @@
 #include "NodeEditor.h"
 #include "InputBitmapNode.h"
 #include "TerrainTileProviderSetupDlg.h"
+#include "HTTPConnection.h"
+#include "MainFrm.h"
 
 #include <algorithm>
 
@@ -16,50 +18,50 @@
 
 #define TILE_RES 256
 
+//Highest zoom level available from the elevation provider (AWS Terrain Tiles)
+#define MAX_TILE_ZOOM 15
+
+//Tile providers. Elevation: AWS Terrain Tiles (terrarium encoding, no key). Imagery: MapTiler Satellite (API key)
+static LPCTSTR s_ElevationTileURL = _T( "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/%d/%d/%d.png" ); //z, x, y
+static LPCTSTR s_SatelliteTileURL = _T( "https://api.maptiler.com/maps/satellite/256/%d/%d/%d.jpg?key=%s" ); //z, x, y, key
+
+static LPCTSTR s_Attribution = _T( "Elevation: AWS Terrain Tiles (Mapzen)  |  Imagery: (c) MapTiler (c) OpenStreetMap contributors" );
+
+class ScopedCriticalSection
+{
+public:
+	ScopedCriticalSection( CCriticalSection& cs ) : m_cs( cs ) { cs.Lock(); }
+	~ScopedCriticalSection() { m_cs.Unlock(); }
+private:
+	CCriticalSection& m_cs;
+};
+
 DEMGrabView::DEMGrabView() :
 	m_Zoom( 1.0f ),
 	m_bLeftMouseButtonDown( false ),
 	m_ViewCenter( Vec2( 500.0f, 500.0f ) ),
 	m_pRootNode( nullptr ),
 	m_pStreamingThread( nullptr ),
+	m_StreamingWakeEvent( FALSE, FALSE ),	//auto-reset, not signaled
+	m_StreamingIdleEvent( TRUE, TRUE ),		//manual-reset, signaled (idle)
+	m_bStopStreaming( false ),
 	m_PreviewMode( PreviewMode_ColorSat )
 {
-	TCHAR apiKeyBuffer[ 64 ];
-
-	CRegKey cKey;
-
-	if( cKey.Open( HKEY_CURRENT_USER, _T( "Software\\GeoGen" ) ) == ERROR_SUCCESS )
-	{
-		ULONG len = 64;
-		if( cKey.QueryStringValue( _T( "MapZenAPIKey" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			m_MapZenAPIKey = apiKeyBuffer;
-
-		len = 64;
-		if( cKey.QueryStringValue( _T( "HereAppId" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			m_HereAppId = apiKeyBuffer;
-
-		len = 64;
-		if( cKey.QueryStringValue( _T( "HereAppCode" ), apiKeyBuffer, &len ) == ERROR_SUCCESS )
-			m_HereAppCode = apiKeyBuffer;
-
-	}
+	m_MapTilerAPIKey = TerrainTileProviderSetupDlg::LoadMapTilerAPIKey();
 }
 
 DEMGrabView::~DEMGrabView()
 {
-	if( m_pStreamingThread )
-	{
-		m_pStreamingThread->SuspendThread();
-		m_pStreamingThread->ExitInstance(); //Doesn't seem to work, so we also suspend
-	}
+	StopStreamingThread();
 
-	if( m_pRootNode ) 
+	if( m_pRootNode )
 		delete m_pRootNode;
 }
 
 
 BEGIN_MESSAGE_MAP(DEMGrabView, CWnd)
 	ON_WM_PAINT()
+	ON_WM_DESTROY()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
@@ -72,65 +74,102 @@ END_MESSAGE_MAP()
 // DEMGrabView message handlers
 UINT TileStreamingThread( void* _param )
 {
-	DEMGrabView* view = (DEMGrabView*)_param;
+	((DEMGrabView*)_param)->StreamTiles();
+	return 0;
+}
 
-	while( true )
+void DEMGrabView::StreamTiles()
+{
+	for( ;; )
 	{
-		view->m_StreamingQueueCriticalSection.Lock();
-		DEMGrabView::TileNode* pNode = view->m_StreamingQueue[ view->m_StreamingQueue.size() - 1 ];
-		view->m_StreamingQueue.pop_back();
-		view->m_StreamingQueueCriticalSection.Unlock();
+		::WaitForSingleObject( m_StreamingWakeEvent, INFINITE );
 
-		pNode->pBitmap = view->GetPreviewTile( pNode->x, pNode->y, pNode->depth, TILE_RES );
-
-		view->Invalidate( FALSE );
-
-		view->m_StreamingQueueCriticalSection.Lock();
-		bool bQueueEmpty = view->m_StreamingQueue.empty();
-		view->m_StreamingQueueCriticalSection.Unlock();
-
-		if( bQueueEmpty )
+		//Download queued tiles until the queue is empty
+		for( ;; )
 		{
-			view->m_bStreamingThreadPaused = FALSE;
-			view->m_pStreamingThread->SuspendThread();
+			TileNode* pNode = nullptr;
+
+			{
+				ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
+
+				if( m_bStopStreaming )
+					return;
+
+				while( !pNode && !m_StreamingQueue.empty() )
+				{
+					pNode = m_StreamingQueue.back();
+					m_StreamingQueue.pop_back();
+
+					if( pNode->IsLoaded() )
+						pNode = nullptr; //queued more than once
+				}
+
+				if( !pNode )
+					break;
+
+				//The node can't be deleted until the idle event is set again (see WaitForStreamingIdle)
+				m_StreamingIdleEvent.ResetEvent();
+			}
+
+			CBitmap* pBitmap = GetPreviewTile( pNode->x, pNode->y, pNode->depth, TILE_RES );
+
+			{
+				ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
+
+				if( pNode->IsLoaded() )
+					delete pBitmap;
+				else
+					pNode->pBitmap = pBitmap;
+
+				m_StreamingIdleEvent.SetEvent();
+			}
+
+			if( pBitmap )
+				::InvalidateRect( m_hWnd, nullptr, FALSE ); //posts WM_PAINT, safe from this thread
 		}
 	}
-	return 1;
+}
+
+void DEMGrabView::WaitForStreamingIdle()
+{
+	{
+		ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
+		m_StreamingQueue.clear();
+	}
+
+	::WaitForSingleObject( m_StreamingIdleEvent, INFINITE );
+}
+
+void DEMGrabView::StopStreamingThread()
+{
+	if( !m_pStreamingThread )
+		return;
+
+	{
+		ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
+		m_StreamingQueue.clear();
+		m_bStopStreaming = true;
+	}
+
+	m_StreamingWakeEvent.SetEvent();
+
+	::WaitForSingleObject( m_pStreamingThread->m_hThread, INFINITE ); //at most one tile download (bounded by HTTP timeouts)
+
+	delete m_pStreamingThread;
+	m_pStreamingThread = nullptr;
+}
+
+void DEMGrabView::OnDestroy()
+{
+	StopStreamingThread(); //before the window handle goes away
+
+	CWnd::OnDestroy();
 }
 
 
 BOOL DEMGrabView::Init()
 {
-	if( m_MapZenAPIKey.IsEmpty() 
-	 || m_HereAppId.IsEmpty()
-	 || m_HereAppCode.IsEmpty() )
-	{
-		TerrainTileProviderSetupDlg dlg;
-		dlg.m_MapZenAPIKey = m_MapZenAPIKey;
-		dlg.m_HereAppId = m_HereAppId;
-		dlg.m_HereAppCode = m_HereAppCode;
-
-		if( dlg.DoModal() == IDOK )
-		{
-			m_MapZenAPIKey = dlg.m_MapZenAPIKey;
-			m_HereAppId = dlg.m_HereAppId;
-			m_HereAppCode = dlg.m_HereAppCode;
-
-			if( m_MapZenAPIKey.IsEmpty() )
-				return FALSE;
-
-			CRegKey cKey;
-			cKey.Create( HKEY_CURRENT_USER, _T( "Software\\GeoGen" ) );
-			cKey.SetStringValue( _T( "MapZenAPIKey" ), m_MapZenAPIKey );
-			cKey.SetStringValue( _T( "HereAppId" ), m_HereAppId );
-			cKey.SetStringValue( _T( "HereAppCode" ), m_HereAppCode );
-
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
+	//No key needed here: the preview only uses elevation tiles. The MapTiler key is asked for when capturing imagery.
 
 	TCHAR my_documents[ MAX_PATH ];
 	HRESULT result = SHGetFolderPath( NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, my_documents );
@@ -146,12 +185,14 @@ BOOL DEMGrabView::Init()
 	m_DEMCacheDir = geoGenDocDir + _T( "\\DEMCache\\" );
 	m_ColorSatCacheDir = geoGenDocDir + _T( "\\ColorSatCache\\" );
 
-	BOOL error;
-	error = CreateDirectory( geoGenDocDir, NULL );
-	error &= CreateDirectory( m_ColorSatCacheDir, NULL );
-	error &= CreateDirectory( m_DEMCacheDir, NULL );
-	 
-	if( error && ( GetLastError() != ERROR_ALREADY_EXISTS ) )
+	auto createDirectory = []( const CString& _dir )
+	{
+		return CreateDirectory( _dir, NULL ) || ( GetLastError() == ERROR_ALREADY_EXISTS );
+	};
+
+	if(    !createDirectory( geoGenDocDir )
+		|| !createDirectory( m_ColorSatCacheDir )
+		|| !createDirectory( m_DEMCacheDir ) )
 	{
 		AfxMessageBox( _T( "Failed to create <Documents>\\GeoGen\\<CacheDirectories>" ), MB_OK );
 		return FALSE;
@@ -167,13 +208,17 @@ BOOL DEMGrabView::Init()
 
 	if( !m_pRootNode->pBitmap )
 	{
-		AfxMessageBox( _T( "Failed to download tiles from mapzen.com" ), MB_OK );
+		AfxMessageBox( _T( "Failed to download elevation tiles (AWS Terrain Tiles).\nCheck your internet connection." ), MB_OK );
 		return FALSE;
 	}
 
-	m_pStreamingThread = AfxBeginThread( TileStreamingThread, this );
-	m_bStreamingThreadPaused = TRUE;
-	m_pStreamingThread->SuspendThread();
+	m_pStreamingThread = AfxBeginThread( TileStreamingThread, this, THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED );
+
+	if( !m_pStreamingThread )
+		return FALSE;
+
+	m_pStreamingThread->m_bAutoDelete = FALSE; //deleted by StopStreamingThread(), which waits on its handle
+	m_pStreamingThread->ResumeThread();
 
 	return TRUE;
 }
@@ -195,16 +240,7 @@ BOOL DEMGrabView::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-class ScopedCriticalSection
-{
-public:
-	ScopedCriticalSection( CCriticalSection& cs ) : m_cs( cs ) { cs.Lock(); }
-	~ScopedCriticalSection() { m_cs.Unlock(); }
-private:
-	CCriticalSection& m_cs;
-};
-
-void DEMGrabView::OnPaint() 
+void DEMGrabView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 	
@@ -225,17 +261,18 @@ void DEMGrabView::OnPaint()
 
 	pMemDC->FillSolidRect( &r, RGB( 255,255,255 ) );
 	
-	m_StreamingQueueCriticalSection.Lock();
-	m_StreamingQueue.clear();
-	m_StreamingQueueCriticalSection.Unlock();
+	{
+		//The lock also keeps the streaming thread from changing TileNode::pBitmap while tiles are drawn
+		ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
 
-	RenderTiles( pMemDC, r, 1.0f, m_pRootNode, false );
+		m_StreamingQueue.clear();
 
-	auto sortNodesByDepth = []( const TileNode* a, const TileNode* b ) { return a->depth > b->depth; };
+		RenderTiles( pMemDC, r, 1.0f, m_pRootNode, false );
 
-	m_StreamingQueueCriticalSection.Lock();
-	std::sort( m_StreamingQueue.begin(), m_StreamingQueue.end(), sortNodesByDepth );
-	m_StreamingQueueCriticalSection.Unlock();
+		//The streaming thread pops from the back: load coarse tiles first
+		auto sortNodesByDepth = []( const TileNode* a, const TileNode* b ) { return a->depth > b->depth; };
+		std::sort( m_StreamingQueue.begin(), m_StreamingQueue.end(), sortNodesByDepth );
+	}
 
 
 	//Draw capture rect
@@ -267,6 +304,13 @@ void DEMGrabView::OnPaint()
 	pMemDC->LineTo( CPoint( m_CaptureRect.left, m_CaptureRect.bottom ) );
 	pMemDC->LineTo( m_CaptureRect.TopLeft() );
 
+	//Provider attribution (required by the tile providers' terms)
+
+	CRect attributionRect( r );
+	attributionRect.DeflateRect( 6, 4 );
+	pMemDC->SetBkMode( TRANSPARENT );
+	pMemDC->SetTextColor( RGB( 40, 40, 40 ) );
+	pMemDC->DrawText( s_Attribution, &attributionRect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE );
 
 	//Blit BackBuffer
 
@@ -315,12 +359,12 @@ void DEMGrabView::CreateTileNode( TileNode* _pParent, uint32_t _childIndex )
 
 void DEMGrabView::AsyncLoadTileBitmap( TileNode* _pTileNode )
 {
-	m_StreamingQueueCriticalSection.Lock();
-	m_StreamingQueue.push_back( _pTileNode );
-	m_StreamingQueueCriticalSection.Unlock();
+	{
+		ScopedCriticalSection lock( m_StreamingQueueCriticalSection );
+		m_StreamingQueue.push_back( _pTileNode );
+	}
 
-	m_bStreamingThreadPaused = FALSE;
-	m_pStreamingThread->ResumeThread();
+	m_StreamingWakeEvent.SetEvent();
 }
 
 
@@ -356,7 +400,8 @@ void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale
 
 		bool bDetailedEnough = tileRect.Width() <= TILE_RES;
 
-		if( bDetailedEnough )
+		//Past the provider's highest zoom level, the tiles get upsampled by StretchBlit
+		if( bDetailedEnough || ( _pTileNode->depth >= MAX_TILE_ZOOM ) )
 		{		
 			_pNodesToDraw->push_back( std::pair<CRect, TileNode*>( tileRect, _pTileNode ) );	
 		}
@@ -381,7 +426,7 @@ void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale
 
 		bool bDetailedEnough = tileRect.Width() < TILE_RES * 2;
 
-		if( bDetailedEnough || (_pTileNode->depth > 14) ) 
+		if( bDetailedEnough || ( _pTileNode->depth >= MAX_TILE_ZOOM ) )
 		{
 			if( _pTileNode->IsLoaded() )
 			{
@@ -414,9 +459,8 @@ void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale
 			else
 			{
 
-				if( _bAllowDraw )
+				if( _bAllowDraw && _pTileNode->IsLoaded() ) //not loaded if its download failed
 				{
-					assert( _pTileNode->IsLoaded() );
 					DrawTile( _pDC, tileRect, _pTileNode );
 				}
 
@@ -457,15 +501,9 @@ void DEMGrabView::DrawTile( CDC* _pDC, const CRect& _tileRect, TileNode* _pTileN
 
 void DEMGrabView::SwitchCaptureMode( bool _captureMode, float _halfExtent )
 {
-	if( _captureMode )
-	{
-		m_StreamingQueueCriticalSection.Lock();
-		m_StreamingQueue.clear();
-		m_StreamingQueueCriticalSection.Unlock();
+	//The streaming thread may be downloading a tile into a node of the tree we are about to delete
+	WaitForStreamingIdle();
 
-		m_pStreamingThread->SuspendThread();
-	}
-	
 	delete m_pRootNode;
 
 	m_pRootNode = new TileNode;
@@ -479,9 +517,6 @@ void DEMGrabView::SwitchCaptureMode( bool _captureMode, float _halfExtent )
 		m_pRootNode->pBitmap = nullptr;
 	else
 		m_pRootNode->pBitmap = GetPreviewTile( 0, 0, 0, TILE_RES );
-
-	//if( !_captureMode )
-	//	m_pStreamingThread->ResumeThread();
 }
 
 
@@ -498,30 +533,29 @@ bool DEMGrabView::CaptureTerrain()
 		return false;
 
 	dlg.m_ColorSatResolution = dlg.m_Resolution; //TODO make varying resolution work
-	
+
+	//Satellite imagery needs a MapTiler key (it may have been set from the settings dialog meanwhile)
+
+	m_MapTilerAPIKey = TerrainTileProviderSetupDlg::LoadMapTilerAPIKey();
+
+	if( dlg.m_bAlsoCaptureColorSat && m_MapTilerAPIKey.IsEmpty() )
+	{
+		TerrainTileProviderSetupDlg keyDlg( this );
+
+		if( keyDlg.DoModal() == IDOK )
+		{
+			TerrainTileProviderSetupDlg::SaveMapTilerAPIKey( keyDlg.m_MapTilerAPIKey );
+			m_MapTilerAPIKey = TerrainTileProviderSetupDlg::LoadMapTilerAPIKey();
+		}
+
+		if( m_MapTilerAPIKey.IsEmpty() )
+		{
+			AfxMessageBox( _T( "No MapTiler API key: only elevations will be captured." ), MB_OK | MB_ICONINFORMATION );
+			dlg.m_bAlsoCaptureColorSat = FALSE;
+		}
+	}
+
 	int resolution = dlg.m_Resolution;
-	
-	SwitchCaptureMode( true, 500.0f );// (float)m_CaptureRect.Width() * 0.5f );
-
-	CRect rect( 0, 0, resolution, resolution );
-
-	float scale = (float)resolution / (float)m_CaptureRect.Height();
-
-	vector< pair< CRect, TileNode* > > nodesToDraw;
-	RenderTiles( nullptr, rect, scale, m_pRootNode, true, true, &nodesToDraw );
-
-	CRect screenRect;
-	GetClientRect( &screenRect );
-
-	CRect progressRect( CPoint( screenRect.CenterPoint() + CPoint( -200, -40 )),
-						CPoint( screenRect.CenterPoint() + CPoint( 200, 40 ) ));
-	
-
-	CProgressCtrl progressCtrl;
-	progressCtrl.Create( 0, progressRect, this, 8748516 );
-	progressCtrl.SetRange( 0, nodesToDraw.size() );
-	progressCtrl.SetPos( 0 );
-	progressCtrl.ShowWindow( SW_SHOW );
 
 	Bitmap outputAltitudeBitmap, outputColorSatBitmap;
 
@@ -538,7 +572,40 @@ bool DEMGrabView::CaptureTerrain()
 		outputColorSatBitmap.Fill( Color::Black );
 	}
 
+	//Captured area, in tile-tree units (the whole world is 1000 units wide), needed to resize the world below
+	const float capturedWorldUnits = (float)m_CaptureRect.Height() / m_Zoom;
+	const float capturedCenterY = m_ViewCenter.y;
+
+	SwitchCaptureMode( true, 500.0f );// (float)m_CaptureRect.Width() * 0.5f );
+
+	CRect rect( 0, 0, resolution, resolution );
+
+	float scale = (float)resolution / (float)m_CaptureRect.Height();
+
+	vector< pair< CRect, TileNode* > > nodesToDraw;
+	RenderTiles( nullptr, rect, scale, m_pRootNode, true, true, &nodesToDraw );
+
+	CRect screenRect;
+	GetClientRect( &screenRect );
+
+	CRect progressRect( CPoint( screenRect.CenterPoint() + CPoint( -200, -40 )),
+						CPoint( screenRect.CenterPoint() + CPoint( 200, 40 ) ));
+
+
+	CProgressCtrl progressCtrl;
+	progressCtrl.Create( WS_CHILD | WS_VISIBLE, progressRect, this, 8748516 );
+	progressCtrl.SetRange32( 0, (int)nodesToDraw.size() );
+	progressCtrl.SetPos( 0 );
+	progressCtrl.UpdateWindow();
+
 	uint32_t i = 0;
+	uint32_t numFailedAltitudeTiles = 0, numFailedColorSatTiles = 0;
+
+	auto updateProgress = [&]()
+	{
+		progressCtrl.SetPos( ++i );
+		progressCtrl.UpdateWindow(); //no message pump during the capture
+	};
 
 	for( auto & node : nodesToDraw )
 	{
@@ -546,22 +613,22 @@ bool DEMGrabView::CaptureTerrain()
 
 		if( !pTileBmp )
 		{
-			LOG_R( "Failed to download altitude tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
-			assert( false );
-			progressCtrl.SetPos( i++ );
-			continue;
+			LOG_R( "Failed to get altitude tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
+			++numFailedAltitudeTiles;
 		}
+		else
+		{
+			auto fn = []( Color& _c )
+			{ //'terrarium' decoding
+				_c *= 255.0f;
+				float altitude = (_c.r * 256.0f + _c.g + _c.b / 256.0f) - 32768.0f;
+				_c = Color( altitude, altitude, altitude, altitude );
+			};
 
-		auto fn = []( Color& _c )
-		{ //MapZen 'terraria' decoding
-			_c *= 255.0f;
-			float altitude = (_c.r * 256.0f + _c.g + _c.b / 256.0f) - 32768.0f;
-			_c = Color( altitude, altitude, altitude, altitude );
-		};
+			outputAltitudeBitmap.StretchBlit( *pTileBmp, node.first.left, node.first.top, node.first.Width(), node.first.Height(), fn );
 
-		outputAltitudeBitmap.StretchBlit( *pTileBmp, node.first.left, node.first.top, node.first.Width(), node.first.Height(), fn );
-		
-		delete pTileBmp;
+			delete pTileBmp;
+		}
 
 		//----------------- COLOR-SAT ---
 
@@ -571,21 +638,42 @@ bool DEMGrabView::CaptureTerrain()
 
 			if( !pTileBmp )
 			{
-				LOG_R( "Failed to download color tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
-				assert( false );
-				progressCtrl.SetPos( i++ );
-				continue;
+				LOG_R( "Failed to get satellite tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
+				++numFailedColorSatTiles;
 			}
+			else
+			{
+				outputColorSatBitmap.StretchBlit( *pTileBmp, node.first.left, node.first.top, node.first.Width(), node.first.Height() );
 
-			outputColorSatBitmap.StretchBlit( *pTileBmp, node.first.left, node.first.top, node.first.Width(), node.first.Height() );
-
-			delete pTileBmp;
+				delete pTileBmp;
+			}
 		}
 
-		progressCtrl.SetPos( i++ );
+		updateProgress();
 	}
 
+	progressCtrl.DestroyWindow();
+
 	SwitchCaptureMode( false, 500.0f );
+
+	if( numFailedAltitudeTiles == nodesToDraw.size() )
+	{
+		AfxMessageBox( _T( "Failed to download the elevation tiles.\nCheck your internet connection (details in log.html)." ), MB_OK | MB_ICONERROR );
+		return false;
+	}
+
+	if( ( numFailedAltitudeTiles > 0 ) || ( numFailedColorSatTiles > 0 ) )
+	{
+		CString msg;
+		msg.Format( _T( "Some tiles could not be downloaded (details in log.html):\n%u of %u elevation tiles\n%u of %u satellite tiles" ),
+					numFailedAltitudeTiles, (uint32_t)nodesToDraw.size(),
+					numFailedColorSatTiles, dlg.m_bAlsoCaptureColorSat ? (uint32_t)nodesToDraw.size() : 0 );
+
+		if( numFailedColorSatTiles == nodesToDraw.size() )
+			msg += _T( "\n\nAll satellite tiles failed: check your MapTiler API key (Settings > GeoData provider)." );
+
+		AfxMessageBox( msg, MB_OK | MB_ICONWARNING );
+	}
 
 	float minAltitude, maxAltitude;
 	ProcessCapturedTerrain( outputAltitudeBitmap, dlg.m_bClipAtSeaLevel, dlg.m_bUnderwater, minAltitude, maxAltitude );
@@ -593,7 +681,10 @@ bool DEMGrabView::CaptureTerrain()
 	CT2A filename( dlg.m_Filename );
 
 	if( !outputAltitudeBitmap.SaveRAW( filename.m_psz ) )
-		return false;// TODO error
+	{
+		AfxMessageBox( _T( "Failed to save the elevation file." ), MB_OK | MB_ICONERROR );
+		return false;
+	}
 
 	std::string colorSatFilename;
 
@@ -605,17 +696,26 @@ bool DEMGrabView::CaptureTerrain()
 		colorSatFilename += ".bmp";
 
 		if( !outputColorSatBitmap.SaveBMP( colorSatFilename.c_str() ) )
+		{
+			AfxMessageBox( _T( "Failed to save the satellite image." ), MB_OK | MB_ICONERROR );
 			return false;
+		}
 	}
 
 	if( dlg.m_bResizeWorld )
 	{
-		theApp.m_TerrainExtent = 1000.0f * (2.0f * 3.14159f * 6400.0f) / m_Zoom;
-		theApp.m_MinAltitude = minAltitude;
-		theApp.m_MaxAltitude = maxAltitude;
+		//Web Mercator: the tile tree spans the equator's circumference, and distances shrink by cos(latitude)
+		const double earthCircumference = 40075016.686; //meters
+		const double mercatorY = 1.0 - 2.0 * (double)capturedCenterY / 1000.0; //+1 at the top (north), -1 at the bottom
+		const double latitude = atan( sinh( XTM_PI * mercatorY ) );
+
+		theApp.m_TerrainExtent = (uint32_t)( earthCircumference * ( capturedWorldUnits / 1000.0 ) * cos( latitude ) );
+		theApp.m_MinAltitude = (int)floorf( minAltitude );
+		theApp.m_MaxAltitude = (int)ceilf( maxAltitude );
 		//TODO theApp.m_SeaLevel ;
 		theApp.m_Resolution = resolution;
-		
+
+		((CMainFrame*)theApp.GetMainWnd())->m_wndPreview.OnNodesResolutionChanged();
 		g_NodeEditor.OnResolutionChange();
 	}
 
@@ -758,16 +858,12 @@ CBitmap* DEMGrabView::GetPreviewTile( int _x, int _y, int _zoom, int _resolution
 	CPngImage* pBitmap = new CPngImage;
 
 	if( pBitmap->LoadFromFile( previewCacheFilename ) )
-	{
 		return pBitmap;
-	}
-	else
-	{
-		assert( false );
-		//TODO delete invalid cache file ?
-		delete pBitmap;
-		return nullptr;
-	}
+
+	LOG_R( "Invalid preview tile in cache (x%d y%d zoom%d), deleting it", _x, _y, _zoom );
+	DeleteFile( previewCacheFilename );
+	delete pBitmap;
+	return nullptr;
 }
 
 
@@ -783,16 +879,12 @@ Bitmap* DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution
 	Bitmap* pBitmap = new Bitmap;
 
 	if( pBitmap->Load( aTerrariumCacheFilename.m_psz ) )
-	{
 		return pBitmap;
-	}
-	else
-	{
-		assert( false );
-		//TODO delete invalid cache file ?
-		delete pBitmap;
-		return nullptr;
-	}
+
+	LOG_R( "Invalid elevation tile in cache (x%d y%d zoom%d), deleting it", _x, _y, _zoom );
+	DeleteFile( terrariumCacheFilename );
+	delete pBitmap;
+	return nullptr;
 }
 
 Bitmap* DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution )
@@ -807,16 +899,55 @@ Bitmap* DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution
 	Bitmap* pBitmap = new Bitmap;
 
 	if( pBitmap->Load( aColorSatCacheFilename.m_psz ) )
-	{
 		return pBitmap;
-	}
-	else
+
+	LOG_R( "Invalid satellite tile in cache (x%d y%d zoom%d), deleting it", _x, _y, _zoom );
+	DeleteFile( colorSatCacheFilename );
+	delete pBitmap;
+	return nullptr;
+}
+
+bool DEMGrabView::DownloadToCache( const CString& _url, const CString& _cacheFilename, const char* _providerName, int _x, int _y, int _zoom )
+{
+	std::vector< byte > data;
+	DWORD httpStatus;
+
+	if( !HTTPConnection::DownloadFile( _url, data, httpStatus ) )
 	{
-		assert( false );
-		//TODO delete invalid cache file ?
-		delete pBitmap;
-		return nullptr;
+		//Don't log the URL, it may contain an API key (braces needed: LOG_R expands to two statements)
+		if( httpStatus == 0 )
+		{
+			LOG_R( "%s: no response for tile x%d y%d zoom%d (network error or timeout)", _providerName, _x, _y, _zoom );
+		}
+		else
+		{
+			LOG_R( "%s: HTTP %u for tile x%d y%d zoom%d", _providerName, (unsigned int)httpStatus, _x, _y, _zoom );
+		}
+
+		return false;
 	}
+
+	//Write to a temporary file first, so an interrupted write never leaves a truncated tile in the cache
+	CString tmpFilename = _cacheFilename + _T( ".tmp" );
+
+	CFile cacheFile;
+	if( !cacheFile.Open( tmpFilename, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyWrite ) )
+	{
+		LOG_R( "%s: failed to write tile x%d y%d zoom%d to the cache", _providerName, _x, _y, _zoom );
+		return false;
+	}
+
+	cacheFile.Write( data.data(), (UINT)data.size() );
+	cacheFile.Close();
+
+	if( !MoveFileEx( tmpFilename, _cacheFilename, MOVEFILE_REPLACE_EXISTING ) )
+	{
+		LOG_R( "%s: failed to write tile x%d y%d zoom%d to the cache", _providerName, _x, _y, _zoom );
+		DeleteFile( tmpFilename );
+		return false;
+	}
+
+	return true;
 }
 
 bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, CString& _terrariumCacheFilename, CString& _previewCacheFilename )
@@ -834,52 +965,20 @@ bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, C
 
 		if( !PathFileExists( _terrariumCacheFilename ) )
 		{
-			//Download file from mapzen
-		
-		#if 0
-			LPCTSTR baseURL = _T( "http://tile.mapzen.com/mapzen/terrain/v1" );
-		#else
-			LPCTSTR baseURL = _T( "http://tile.nextzen.org/tilezen/terrain/v1" );
-		#endif
-
+			//Download it from AWS Terrain Tiles (256x256 tiles, no key needed)
+			assert( _resolution == 256 );
 
 			CString url;
-			url.Format( _T( "%s/%d/%s/%d/%d/%d.png?api_key=%s" ),
-				baseURL, _resolution, _T( "terrarium" ), _zoom, _x, _y, m_MapZenAPIKey );
+			url.Format( s_ElevationTileURL, _zoom, _x, _y );
 
-			CT2A urla( url );
-
-			uint32_t fileSize;
-			byte* pTileData = m_MapZenHttpConnection.DownloadFile( urla.m_psz, fileSize );
-
-			if( !pTileData )
+			if( !DownloadToCache( url, _terrariumCacheFilename, "AWS Terrain Tiles", _x, _y, _zoom ) )
 				return false;
-
-			if( fileSize < 1024 )
-			{
-				//File not found on server or quotta exceeded ?
-				delete pTileData;
-				return false;
-			}
-
-			//save raw terrarium file to cache
-			CFile cacheFile;
-			if( !cacheFile.Open( _terrariumCacheFilename, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyNone ) )
-			{
-				assert( false );
-				//TODO disk full ?? handle gracefully
-			}
-
-			cacheFile.Write( pTileData, fileSize );
-
-			delete pTileData;
-
 		}
 
 		Bitmap previewBMP;
 		if( !previewBMP.LoadPNG( aTerrariumCacheFilename.m_psz ) )
 		{
-			assert( false );
+			DeleteFile( _terrariumCacheFilename ); //corrupted, download it again next time
 			return false;
 		}
 
@@ -894,49 +993,26 @@ bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, C
 
 bool DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution, CString& _colorSatCacheFilename )
 {
-	_colorSatCacheFilename.Format( _T( "%s%s_r%d_z%d_x%d_y%d.png" ), m_ColorSatCacheDir, _T( "satellite" ), _resolution, _zoom, _x, _y );
-
+	_colorSatCacheFilename.Format( _T( "%s%s_r%d_z%d_x%d_y%d.jpg" ), m_ColorSatCacheDir, _T( "maptiler_satellite" ), _resolution, _zoom, _x, _y );
 
 	if( !PathFileExists( _colorSatCacheFilename ) )
 	{
-		//Download file from here.com
-			
+		//Download it from MapTiler (256x256 JPEG tiles, API key needed)
+		assert( _resolution == 256 );
+
+		if( m_MapTilerAPIKey.IsEmpty() )
+			return false;
+
 		CString url;
-		url.Format( _T( "https://1.aerial.maps.cit.api.here.com/maptile/2.1/maptile/newest/%s.day/%d/%d/%d/%d/%s?app_id=%s&app_code=%s" ),
-			_T( "satellite" ), _zoom, _x, _y, _resolution, _T( "png" ), m_HereAppId, m_HereAppCode );
+		url.Format( s_SatelliteTileURL, _zoom, _x, _y, (LPCTSTR)m_MapTilerAPIKey );
 
-		CT2A urla( url );
-
-		uint32_t fileSize;
-		byte* pTileData = m_HereDotComHttpConnection.DownloadFile( urla.m_psz, fileSize );
-
-		if( !pTileData )
+		if( !DownloadToCache( url, _colorSatCacheFilename, "MapTiler", _x, _y, _zoom ) )
 			return false;
-
-		if( fileSize < 1024 )
-		{
-			//File not found on server or quotta exceeded ?
-			delete pTileData;
-			return false;
-		}
-
-		//save raw terrarium file to cache
-		CFile cacheFile;
-		if( !cacheFile.Open( _colorSatCacheFilename, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyNone ) )
-		{
-			assert( false );
-			//TODO disk full ?? handle gracefully
-		}
-
-		cacheFile.Write( pTileData, fileSize );
-
-		delete pTileData;
-
 	}
-
 
 	return true;
 }
+
 
 void DEMGrabView::ProcessPreviewTile( Bitmap& _bmp )
 {
