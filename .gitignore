@@ -340,3 +340,6 @@ CMakeUserPresets.json
 
 # GeoGen runtime log
 log.html
+
+# Cygwin/Git Bash crash dumps
+*.stackdump
