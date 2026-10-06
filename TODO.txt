@@ -9,6 +9,7 @@ bugs:
 	blur node min radius != 0
 
 nodes:
+	Moutains from rivers https://news.russellsaw.io/article?id=art_4qKbC8yeMb1
 	substance nodes https://www.youtube.com/watch?v=IcwDAoegKsg
 	checker
 	minstrell (more options, fractal... )
