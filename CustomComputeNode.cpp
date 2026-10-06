@@ -330,7 +330,8 @@ bool CustomComputeNode::CompileShader()
 		}
 	}
 
-	shaderCode += m_pHLSLPrefix;
+	if( m_pHLSLPrefix ) //optional, most nodes don't set one
+		shaderCode += m_pHLSLPrefix;
 	shaderCode += "\n\n";
 
 	//helper constants & functions
@@ -354,7 +355,8 @@ bool CustomComputeNode::CompileShader()
 	shaderCode += "\tfloat2 _uv = float2(_pos) / (float)(Resolution - 1);\n";
 	shaderCode += "\tfloat2 _wsPos = (_uv - 0.5f) * Extent;\n\n";
 
-	shaderCode += m_pHLSLBody;
+	if( m_pHLSLBody )
+		shaderCode += m_pHLSLBody;
 
 	shaderCode += "\n}\n";
 
