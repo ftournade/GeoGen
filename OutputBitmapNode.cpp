@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "OutputBitmapNode.h"
 
-#include <Core/Bitmap.h>
 
 OutputBitmapNode::OutputBitmapNode()
 {
@@ -17,7 +16,7 @@ OutputBitmapNode::~OutputBitmapNode()
 {
 }
 
-const Str& OutputBitmapNode::GetFilename()
+const std::string& OutputBitmapNode::GetFilename()
 {
 	return m_ParameterSlots[ 0 ].m_ValueString;
 }
@@ -33,7 +32,7 @@ bool OutputBitmapNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* OutputBitmapNode::GetOutput( u32 _idx ) const
+const Map* OutputBitmapNode::GetOutput( uint32_t _idx ) const
 {
 	return nullptr;
 }
@@ -67,11 +66,11 @@ void OutputBitmapNode::InternalCompute()
 	byte* pBitmapData;
 	bmp.GetMipMapData( 0, 0, 0, &pBitmapData );
 
-	for( u32 y = 0 ; y < GetResolution() ; ++y )
+	for( uint32_t y = 0 ; y < GetResolution() ; ++y )
 	{
-		for( u32 x = 0 ; x < GetResolution() ; ++x )
+		for( uint32_t x = 0 ; x < GetResolution() ; ++x )
 		{
-			u32 i = y * GetResolution() + x;
+			uint32_t i = y * GetResolution() + x;
 
 			if( inputMap->GetFormat() == DXGI_FORMAT_R32_FLOAT )
 			{
@@ -80,7 +79,7 @@ void OutputBitmapNode::InternalCompute()
 			}
 			else
 			{
-				DBG_CHECK( inputMap->GetFormat() == DXGI_FORMAT_R16G16B16A16_FLOAT );
+				assert( inputMap->GetFormat() == DXGI_FORMAT_R16G16B16A16_FLOAT );
 
 				float* v = &rawPixels[ ( y * GetResolution() + x ) * 4 ];
 
@@ -97,7 +96,7 @@ void OutputBitmapNode::InternalCompute()
 
 	if( !bmp.Save( GetFilename().c_str() ) )
 	{
-		DBG_CHECK( false ); //TODO handle error
+		assert( false ); //TODO handle error
 	}
 #else
 	::AfxMessageBox( _T( "Bitmap output not available on demo version !" ) );

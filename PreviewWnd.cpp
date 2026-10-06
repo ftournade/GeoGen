@@ -8,7 +8,6 @@
 
 #include "NodeEditor.h"
 
-#include <Core/Log.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -142,7 +141,7 @@ bool CPreviewWnd::InitResolutionIndependentD3DStuff()
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
-	u32 white = 0xFFFFFFFF;
+	uint32_t white = 0xFFFFFFFF;
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &white;
 	data.SysMemPitch = 4;

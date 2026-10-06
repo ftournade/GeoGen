@@ -15,7 +15,7 @@ public:
 	bool ConnectToServer( const char *szServerName, WORD portNum, bool _ssl = false );
 	void Disconnect();
 
-	byte* DownloadFile( const char* _url, u32& _fileSize, bool _ssl = false );
+	byte* DownloadFile( const char* _url, uint32_t& _fileSize, bool _ssl = false );
 	
 private:
 	SOCKET m_Socket;

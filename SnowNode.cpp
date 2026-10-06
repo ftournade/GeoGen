@@ -56,7 +56,7 @@ SnowNode::SnowNode()
 	if( !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "VSMainSnow", nullptr, &m_pPreviewVertexShader )  //assume same input layout as m_pTerrainVertexShader
 	 || !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "PSMainSnow", nullptr, &m_pPreviewPixelShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
@@ -108,7 +108,7 @@ bool SnowNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* SnowNode::GetOutput( u32 _idx ) const
+const Map* SnowNode::GetOutput( uint32_t _idx ) const
 {
 	AddSnowAndTerrain();
 
@@ -147,11 +147,11 @@ void SnowNode::AddSnowAndTerrain() const
 {
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { m_HeightMap.GetUAV() };
 	ID3D11ShaderResourceView* srvs[] = { m_BedRockMap.GetSRV(), m_SnowMap.GetSRV() };
@@ -195,11 +195,11 @@ void SnowNode::InitSim()
 
 	//Init bedrock map by remapping input heightmap from [0,1] to meters
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] =	{ m_BedRockMap.GetUAV()	};
 	ID3D11ShaderResourceView* srvs[] = { pInputMap->GetSRV() };
@@ -239,11 +239,11 @@ void SnowNode::SmoothSnow()
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
 
-	const u32 threadGroupSizeX = 8;
-	const u32 threadGroupSizeY = 8;
+	const uint32_t threadGroupSizeX = 8;
+	const uint32_t threadGroupSizeY = 8;
 
-	u32 numGroupsX = 32;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = 32;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = 32;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = 32;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	const Map* pTemperatureMap = this->GetRemoteInputMap( 1 );
 	const Map* pSmoothingMap = this->GetRemoteInputMap( 2 );
@@ -282,11 +282,11 @@ void SnowNode::StepSim( bool _rebindResources, bool _unbindResourcesOnExit )
 
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	const u32 threadGroupSizeX = 8;
-	const u32 threadGroupSizeY = 8;
+	const uint32_t threadGroupSizeX = 8;
+	const uint32_t threadGroupSizeY = 8;
 
-	u32 numGroupsX = 4;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = 4;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = 4;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = 4;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { m_BedRockMap.GetUAV(), nullptr, nullptr, nullptr, nullptr, nullptr, m_SnowMap.GetUAV() };
 //	ID3D11ShaderResourceView* srvs[] = { nullptr, nullptr, nullptr, nullptr, m_BedRockMap.GetSRV() };

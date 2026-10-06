@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Core/Win32BackBuffer.h>
 
 #define WM_RIVER_CHANGED (WM_USER + 37)
 

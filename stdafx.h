@@ -52,13 +52,29 @@
 #endif
 
 
-#include <Core/stdafx.h>
+#include <d3d11.h>
+
+// xtm/Core subset (Core/)
+#include <Core/xtm_prelude.h>
+#include <Core/Bitmap.h>
+#include <Core/Camera.h>
+#include <Core/Color.h>
+#include <Core/Curve.h>
+#include <Core/Debug.h>
+#include <Core/float16.h>
+#include <Core/Keyframer.h>
+#include <Core/Log.h>
+#include <Core/Mat33.h>
+#include <Core/Str.h>
+#include <Core/TVector.h>
 #include <Core/Vec2.h>
+#include <Core/Vec2i.h>
+#include <Core/Win32BackBuffer.h>
 
-//#include <Windows.h>
-//#include <Windowsx.h>
-
+#include <cassert>
 #include <memory>
+#include <vector>
+#include <string>
 
 template <typename T>
 typename std::vector< std::weak_ptr<T> >::iterator Find( std::vector< std::weak_ptr<T> >& _vector, const std::shared_ptr<T>& _value )
@@ -95,56 +111,5 @@ bool Remove( std::vector< T >& _vector, const T& _value )
 
 	return bRemoved;
 }
-
-struct UIRect
-{
-	xtm::Vec2 Pos, Size;
-
-	bool PointInRect( const xtm::Vec2& p ) const
-	{
-		return (p.x >= Pos.x) && (p.y >= Pos.y) && (p.x <= Pos.x + Size.x) && (p.y <= Pos.y + Size.y);
-	}
-
-	xtm::Vec2 Center() const
-	{
-		return Pos + Size * 0.5f;
-	}
-
-	UIRect operator*( float f ) const
-	{
-		UIRect r;
-		r.Pos = Pos * f;
-		r.Size = Size * f;
-
-		return r;
-	}
-
-	UIRect operator/( float f ) const
-	{
-		UIRect r;
-		r.Pos = Pos / f;
-		r.Size = Size / f;
-
-		return r;
-	}
-
-	UIRect operator+( const xtm::Vec2& v ) const
-	{
-		UIRect r;
-		r.Pos = Pos + v;
-		r.Size = Size;
-
-		return r;
-	}
-
-	UIRect operator-( const xtm::Vec2& v ) const
-	{
-		UIRect r;
-		r.Pos = Pos - v;
-		r.Size = Size;
-
-		return r;
-	}
-};
 
 #include <TinyXml2/tinyxml2.h>

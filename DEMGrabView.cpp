@@ -8,8 +8,6 @@
 #include "InputBitmapNode.h"
 #include "TerrainTileProviderSetupDlg.h"
 
-#include <Core/Bitmap.h>
-#include <Core/Log.h>
 #include <algorithm>
 
 #ifdef _DEBUG
@@ -275,7 +273,7 @@ void DEMGrabView::OnPaint()
 	m_backBuffer.Blit( dc.GetSafeHdc() );
 }
 
-void DEMGrabView::CreateTileNode( TileNode* _pParent, u32 _childIndex )
+void DEMGrabView::CreateTileNode( TileNode* _pParent, uint32_t _childIndex )
 {
 	TileNode* pChild = new TileNode;
 	_pParent->Childs[ _childIndex ] = pChild;
@@ -335,8 +333,8 @@ inline BOOL RectVisible( const CRect& _screenRect, const CRect& _tileRect )
 
 void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale, TileNode* _pTileNode, bool _bCaptureMode, bool _bAllowDraw, vector< pair< CRect, TileNode* > >* _pNodesToDraw )
 {
-	DBG_CHECK( _pTileNode );
-	//DBG_CHECK( _pTileNode->pBitmap );
+	assert( _pTileNode );
+	//assert( _pTileNode->pBitmap );
 	
 	Vec2 c( _screenRect.CenterPoint().x, _screenRect.CenterPoint().y );
 
@@ -354,7 +352,7 @@ void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale
 	
 	if( _bCaptureMode )
 	{
-		DBG_CHECK( _pNodesToDraw );
+		assert( _pNodesToDraw );
 
 		bool bDetailedEnough = tileRect.Width() <= TILE_RES;
 
@@ -418,7 +416,7 @@ void DEMGrabView::RenderTiles( CDC* _pDC, const CRect& _screenRect, float _scale
 
 				if( _bAllowDraw )
 				{
-					DBG_CHECK( _pTileNode->IsLoaded() );
+					assert( _pTileNode->IsLoaded() );
 					DrawTile( _pDC, tileRect, _pTileNode );
 				}
 
@@ -445,7 +443,7 @@ void DEMGrabView::DrawTile( CDC* _pDC, const CRect& _tileRect, TileNode* _pTileN
 	CDC bitmapDC;
 	if( !bitmapDC.CreateCompatibleDC( _pDC ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		return;
 	}
 
@@ -540,7 +538,7 @@ bool DEMGrabView::CaptureTerrain()
 		outputColorSatBitmap.Fill( Color::Black );
 	}
 
-	u32 i = 0;
+	uint32_t i = 0;
 
 	for( auto & node : nodesToDraw )
 	{
@@ -549,7 +547,7 @@ bool DEMGrabView::CaptureTerrain()
 		if( !pTileBmp )
 		{
 			LOG_R( "Failed to download altitude tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
-			DBG_CHECK( false );
+			assert( false );
 			progressCtrl.SetPos( i++ );
 			continue;
 		}
@@ -574,7 +572,7 @@ bool DEMGrabView::CaptureTerrain()
 			if( !pTileBmp )
 			{
 				LOG_R( "Failed to download color tile (x%d y%d zoom%d)", node.second->x, node.second->y, node.second->depth );
-				DBG_CHECK( false );
+				assert( false );
 				progressCtrl.SetPos( i++ );
 				continue;
 			}
@@ -597,7 +595,7 @@ bool DEMGrabView::CaptureTerrain()
 	if( !outputAltitudeBitmap.SaveRAW( filename.m_psz ) )
 		return false;// TODO error
 
-	Str colorSatFilename;
+	std::string colorSatFilename;
 
 	if( dlg.m_bAlsoCaptureColorSat )
 	{
@@ -649,16 +647,16 @@ bool DEMGrabView::CaptureTerrain()
 
 void DEMGrabView::ProcessCapturedTerrain( const Bitmap& _bmp, bool _clipAtSeaLevel, bool _underwater, float& _minAltitude, float& _maxAltitude )
 {
-	DBG_CHECK( _bmp.GetFormat() == DataFormat::R32_FLOAT );
+	assert( _bmp.GetFormat() == DataFormat::R32_FLOAT );
 
 	float* pPixels = (float*)_bmp.GetRawData();
 
-	u32 n = _bmp.GetWidth() * _bmp.GetHeight();
+	uint32_t n = _bmp.GetWidth() * _bmp.GetHeight();
 
 	_minAltitude = 99999999999.0f;
 	_maxAltitude = -99999999999.0f;
 
-	for( u32 i = 0 ; i < n ; ++i )
+	for( uint32_t i = 0 ; i < n ; ++i )
 	{
 		float& altitude = pPixels[ i ];
 
@@ -672,7 +670,7 @@ void DEMGrabView::ProcessCapturedTerrain( const Bitmap& _bmp, bool _clipAtSeaLev
 		else
 			_minAltitude = max( _minAltitude, 0.0f );
 
-	for( u32 i = 0 ; i < n ; ++i )
+	for( uint32_t i = 0 ; i < n ; ++i )
 	{
 		float altitude = pPixels[ i ];
 
@@ -765,7 +763,7 @@ CBitmap* DEMGrabView::GetPreviewTile( int _x, int _y, int _zoom, int _resolution
 	}
 	else
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//TODO delete invalid cache file ?
 		delete pBitmap;
 		return nullptr;
@@ -790,7 +788,7 @@ xtm::Bitmap* DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resol
 	}
 	else
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//TODO delete invalid cache file ?
 		delete pBitmap;
 		return nullptr;
@@ -814,7 +812,7 @@ xtm::Bitmap* DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resol
 	}
 	else
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//TODO delete invalid cache file ?
 		delete pBitmap;
 		return nullptr;
@@ -851,7 +849,7 @@ bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, C
 
 			CT2A urla( url );
 
-			u32 fileSize;
+			uint32_t fileSize;
 			byte* pTileData = m_MapZenHttpConnection.DownloadFile( urla.m_psz, fileSize );
 
 			if( !pTileData )
@@ -868,7 +866,7 @@ bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, C
 			CFile cacheFile;
 			if( !cacheFile.Open( _terrariumCacheFilename, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyNone ) )
 			{
-				DBG_CHECK( false );
+				assert( false );
 				//TODO disk full ?? handle gracefully
 			}
 
@@ -881,7 +879,7 @@ bool DEMGrabView::GetAltitudeTile( int _x, int _y, int _zoom, int _resolution, C
 		Bitmap previewBMP;
 		if( !previewBMP.LoadPNG( aTerrariumCacheFilename.m_psz ) )
 		{
-			DBG_CHECK( false );
+			assert( false );
 			return false;
 		}
 
@@ -909,7 +907,7 @@ bool DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution, C
 
 		CT2A urla( url );
 
-		u32 fileSize;
+		uint32_t fileSize;
 		byte* pTileData = m_HereDotComHttpConnection.DownloadFile( urla.m_psz, fileSize );
 
 		if( !pTileData )
@@ -926,7 +924,7 @@ bool DEMGrabView::GetColorSatTile( int _x, int _y, int _zoom, int _resolution, C
 		CFile cacheFile;
 		if( !cacheFile.Open( _colorSatCacheFilename, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyNone ) )
 		{
-			DBG_CHECK( false );
+			assert( false );
 			//TODO disk full ?? handle gracefully
 		}
 
@@ -949,12 +947,12 @@ void DEMGrabView::ProcessPreviewTile( Bitmap& _bmp )
 
 	rgba8_t* pPixels = (rgba8_t*)_bmp.GetRawData();
 	
-	u32 numPixels = _bmp.GetWidth() * _bmp.GetHeight();
+	uint32_t numPixels = _bmp.GetWidth() * _bmp.GetHeight();
 
 	float min = 99999999999.0f;
 	float max = -99999999999.0f;
 
-	for( u32 i = 0; i < numPixels; ++i )
+	for( uint32_t i = 0; i < numPixels; ++i )
 	{
 		rgba8_t& pixel = pPixels[ i ];
 

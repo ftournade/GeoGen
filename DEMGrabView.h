@@ -2,7 +2,6 @@
 
 #include "HTTPConnection.h"
 
-#include <Core/Win32BackBuffer.h>
 #include <list>
 
 class DEMGrabView : public CWnd
@@ -66,7 +65,7 @@ private:
 	};
 
 	BOOL Init();
-	void CreateTileNode( TileNode* _pParent, u32 _childIndex );
+	void CreateTileNode( TileNode* _pParent, uint32_t _childIndex );
 	void AsyncLoadTileBitmap( TileNode* _pTileNode );
 
 	void DrawTile( CDC* _pDC, const CRect& _tileRect, TileNode* _pTileNode ) const;

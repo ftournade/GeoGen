@@ -12,7 +12,7 @@ public:
 
 	virtual bool OneTimeInit();
 
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	virtual void OnInputConnectionChanged( int _slot );
 	
@@ -28,7 +28,7 @@ protected:
 private:
 	Map m_Output;
 
-	u32 m_SplatCount;
+	uint32_t m_SplatCount;
 
 	D3DObject< ID3D11VertexShader > m_VS;
 	D3DObject< ID3D11PixelShader > m_PS;

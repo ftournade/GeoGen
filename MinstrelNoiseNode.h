@@ -10,7 +10,7 @@ public:
 	virtual ~MinstrelNoiseNode();
 
 	virtual bool OnResolutionChanged();
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 protected:
 	virtual void InternalCompute();

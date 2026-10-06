@@ -2,7 +2,6 @@
 
 #include "ColorGradientNode.h"
 #include "ColorPicker.h"
-#include <Core/Win32BackBuffer.h>
 
 class ColorGradientWnd : public CWnd
 {

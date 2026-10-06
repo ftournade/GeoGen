@@ -10,6 +10,25 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# ---------------------------------------------------------------------------------------------
+# Third-party packages
+# ---------------------------------------------------------------------------------------------
+
+include(FetchContent)
+
+set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(tinyxml2
+	GIT_REPOSITORY	https://github.com/leethomason/tinyxml2.git
+	GIT_TAG			9148bdf719e997d1f474be6bcc7943881046dba1	# 11.0.0
+	GIT_SHALLOW		FALSE
+)
+FetchContent_MakeAvailable(tinyxml2)
+
+# The sources include <TinyXml2/tinyxml2.h> (original repo layout); forward it to the package header
+set(GEOGEN_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
+file(WRITE "${GEOGEN_GENERATED_INCLUDE_DIR}/TinyXml2/tinyxml2.h"
+	"#pragma once\n#include \"${tinyxml2_SOURCE_DIR}/tinyxml2.h\"\n")
+
 # MFC as a shared DLL (Visual Studio generators read this flag; _AFXDLL is also defined below
 # so that non-VS generators such as Ninja behave the same way)
 set(CMAKE_MFC_FLAG 2)
@@ -102,6 +121,56 @@ set(SRC_UI_DEMGRAB
 	TerrainTileProviderSetupDlg.cpp	TerrainTileProviderSetupDlg.h
 )
 
+# Subset of xtm/Core (github.com/ftournade/xtm @ 81e8a648ad5d).
+# Local changes: Bitmap.cpp has JPG/DXT support disabled (libjpeg/squish not vendored),
+# Bitmap_PNG_Unsupported.cpp replaces Bitmap_PNG.cpp (LightZPNG not vendored),
+# xtm_prelude.h replaces Core/stdafx.h, DLLMain.h/CORE_API removed, and Win32 calls in
+# Log.cpp/UIHelper.h/WinUIHelper.cpp use explicit ANSI (...A) variants since GeoGen builds as Unicode.
+set(SRC_CORE
+	Core/AABBox.cpp				Core/AABBox.h				Core/AABBox.inl
+								Core/BasicTypes.h
+	Core/Bitmap.cpp				Core/Bitmap.h
+	Core/Bitmap_BMP.cpp
+	Core/Bitmap_DDS.cpp
+	Core/Bitmap_PNG_Unsupported.cpp
+	Core/BSphere.cpp			Core/BSphere.h				Core/BSphere.inl
+	Core/Camera.cpp				Core/Camera.h
+	Core/Color.cpp				Core/Color.h				Core/Color.inl
+	Core/ConvexHull.cpp			Core/ConvexHull.h
+	Core/Curve.cpp				Core/Curve.h
+	Core/DataFormats.cpp		Core/DataFormats.h
+	Core/Debug.cpp				Core/Debug.h
+	Core/FileStream.cpp			Core/FileStream.h
+								Core/FileSystem.h
+	Core/float16.cpp			Core/float16.h
+								Core/IByteStream.h
+	Core/IFindFile.cpp			Core/IFindFile.h
+	Core/Keyframer.cpp			Core/Keyframer.h
+	Core/Log.cpp				Core/Log.h
+	Core/Mat33.cpp				Core/Mat33.h				Core/Mat33.inl
+	Core/Mat44.cpp				Core/Mat44.h				Core/Mat44.inl
+								Core/MathConstants.h
+								Core/MemoryManager.h
+	Core/OBBox.cpp				Core/OBBox.h				Core/OBBox.inl
+	Core/Plane.cpp				Core/Plane.h
+	Core/Ray.cpp				Core/Ray.h					Core/Ray.inl
+	Core/StandardLib.cpp		Core/StandardLib.h
+	Core/StandardMath.cpp		Core/StandardMath.h
+	Core/Str.cpp				Core/Str.h					Core/Str.inl
+								Core/Threading.h
+								Core/TList.h
+	Core/TVector.cpp			Core/TVector.h
+								Core/UIHelper.h
+	Core/Utility.cpp			Core/Utility.h
+	Core/Vec2.cpp				Core/Vec2.h					Core/Vec2.inl
+								Core/Vec2i.h
+	Core/Vec3.cpp				Core/Vec3.h					Core/Vec3.inl
+	Core/Vec4.cpp				Core/Vec4.h					Core/Vec4.inl
+	Core/Win32BackBuffer.cpp	Core/Win32BackBuffer.h
+	Core/WinUIHelper.cpp
+								Core/xtm_prelude.h
+)
+
 set(SRC_RESOURCES
 	GeoGen.rc
 	res/GeoGen.rc2
@@ -130,6 +199,7 @@ source_group("UI\\Preview"			FILES ${SRC_UI_PREVIEW})
 source_group("UI\\Properties"		FILES ${SRC_UI_PROPERTIES})
 source_group("UI\\DEMGrab"			FILES ${SRC_UI_DEMGRAB})
 source_group("UI\\Resource Files"	FILES ${SRC_RESOURCES})
+source_group("Core"					FILES ${SRC_CORE})
 
 set_source_files_properties(${SRC_SHADERS} TODO.txt PROPERTIES HEADER_FILE_ONLY ON)
 
@@ -143,6 +213,7 @@ add_executable(GeoGen WIN32
 	${SRC_UI_PREVIEW}
 	${SRC_UI_PROPERTIES}
 	${SRC_UI_DEMGRAB}
+	${SRC_CORE}
 	${SRC_RESOURCES}
 	TODO.txt
 )
@@ -151,13 +222,20 @@ add_executable(GeoGen WIN32
 # Compilation
 # ---------------------------------------------------------------------------------------------
 
-target_include_directories(GeoGen PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(GeoGen PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${GEOGEN_GENERATED_INCLUDE_DIR}
+)
 
 target_compile_definitions(GeoGen PRIVATE
 	_WINDOWS
 	UNICODE
 	_UNICODE
 	_AFXDLL
+	XTM_WIN32
+	XTM_D3D
+	XTM_USE_DOUBLE_FLOAT_PRECISION
+	_CRT_SECURE_NO_WARNINGS
 	$<$<CONFIG:Debug>:_DEBUG>
 )
 
@@ -178,6 +256,7 @@ target_compile_options(GeoGen PRIVATE
 # ---------------------------------------------------------------------------------------------
 
 target_link_libraries(GeoGen PRIVATE
+	tinyxml2::tinyxml2
 	d3d11
 	dxgi
 	dxguid

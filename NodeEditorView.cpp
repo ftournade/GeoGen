@@ -5,7 +5,6 @@
 #include "NodeEditor.h"
 #include "NodeFactory.h"
 
-#include <Core/Log.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,14 +34,14 @@ bool g_bDraggingView = false;
 
 extern shared_ptr<ComputeNode> g_DragNode;
 extern Vec2 g_ToolTipPos;
-extern Str g_ToolTipText;
+extern std::string g_ToolTipText;
 
 extern shared_ptr<ComputeNode> g_HoveringNode;
-extern u32 g_HoveringSlotIndex;
+extern uint32_t g_HoveringSlotIndex;
 extern IOSlotCategory g_HoveringSlotCategory;
 
 extern shared_ptr<ComputeNode> g_DragLink_Node;
-extern u32 g_DragLink_SlotIndex;
+extern uint32_t g_DragLink_SlotIndex;
 extern IOSlotCategory g_DragLink_SlotCategory;
 
 shared_ptr< ComputeNode > g_pNodeHavingPoppedUpOptionsMenu;
@@ -183,7 +182,7 @@ void NodeEditorView::InitNodeOptionsPopupMenus( const CPoint& _menuPos )
 	resolutionOptionMenu.AppendMenu( MF_STRING, WM_SET_NODE_RESOLUTION_MULTIPLIER_1_8X, _T( "1/8x" ) );
 
 
-	s32 resModifier = g_pNodeHavingPoppedUpOptionsMenu->GetResolutionModifier();
+	int32_t resModifier = g_pNodeHavingPoppedUpOptionsMenu->GetResolutionModifier();
 	UINT currentResModifier = WM_SET_NODE_RESOLUTION_MULTIPLIER_1X;
 
 	switch( resModifier )
@@ -239,7 +238,7 @@ void NodeEditorView::OnPaint()
 
 		g_NodeEditor.DrawWithMFC( r, pMemDC );
 
-		u32 freeGPUMemory, totalGPUMemory;
+		uint32_t freeGPUMemory, totalGPUMemory;
 		if( g_Renderer.GetMemoryStatistics( freeGPUMemory, totalGPUMemory ) )
 		{
 			CString str;
@@ -527,7 +526,7 @@ void NodeEditorView::OnAddNode( UINT _cmdID )
 
 	if( !pNewNode->OneTimeInit() )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		LOG_R( "Node %s failed in OneTimeInit()", pNewNode->GetName() );
 		return;
 	}
@@ -575,7 +574,7 @@ void NodeEditorView::OnSetNodeResolutionModifier( UINT _id )
 {
 	ASSERT( g_pNodeHavingPoppedUpOptionsMenu );
 
-	s32 resModifier = 1;
+	int32_t resModifier = 1;
 
 	switch( _id )
 	{

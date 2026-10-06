@@ -11,20 +11,20 @@ MinstrelNoiseNode::MinstrelNoiseNode()
 	if( !g_Renderer.CreateShader( "Shaders/MinstrelNoise.hlsl", "SetupGrid", nullptr, &m_SetupGridCS ) )
 	{
 		
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
 	if( !g_Renderer.CreateShader( "Shaders/MinstrelNoise.hlsl", "Main", nullptr, &m_MainCS ) )
 	{
 
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
 	if( !m_GridPointsMap.Init( 32, 32, DXGI_FORMAT_R32G32B32A32_FLOAT ) ) //RG=(x1,y1) GB=(x2,y2)
 	{
-		DBG_CHECK( false );
+		assert( false );
 	}
 
 }
@@ -44,7 +44,7 @@ bool MinstrelNoiseNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* MinstrelNoiseNode::GetOutput( u32 _idx ) const
+const Map* MinstrelNoiseNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_OutputMap;
 }
@@ -70,11 +70,11 @@ void MinstrelNoiseNode::InternalCompute()
 	ID3D11ShaderResourceView* srvs[] = { m_GridPointsMap.GetSRV() };
 	pDevCtx->CSSetShaderResources( 0, 1, srvs );
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (m_resolution + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (m_resolution + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (m_resolution + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (m_resolution + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GridMesh.h"
 
-#include <Core/Debug.h>
 
 Renderer g_Renderer;
 
@@ -16,17 +15,17 @@ GridMesh::~GridMesh()
 
 
 
-bool GridMesh::CreateGrid( ID3D11Device* _pDevice, u32 _resolution )
+bool GridMesh::CreateGrid( ID3D11Device* _pDevice, uint32_t _resolution )
 {
-	u32 numQuads = (_resolution - 1) * (_resolution - 1);
+	uint32_t numQuads = (_resolution - 1) * (_resolution - 1);
 
 	//	Reset();
 	m_Vertices.resize( _resolution * _resolution );
 	m_Indices.resize( numQuads * 2 * 3 );
 
-	for( u32 y = 0 ; y < _resolution ; ++y )
+	for( uint32_t y = 0 ; y < _resolution ; ++y )
 	{
-		for( u32 x = 0 ; x < _resolution ; ++x )
+		for( uint32_t x = 0 ; x < _resolution ; ++x )
 		{
 			Vec2& vtx = m_Vertices[ y * _resolution + x ];
 
@@ -35,13 +34,13 @@ bool GridMesh::CreateGrid( ID3D11Device* _pDevice, u32 _resolution )
 		}
 	}
 
-	u32 idx = 0;
+	uint32_t idx = 0;
 
-	for( u32 y = 0 ; y < _resolution - 1 ; ++y )
+	for( uint32_t y = 0 ; y < _resolution - 1 ; ++y )
 	{
-		for( u32 x = 0 ; x < _resolution - 1 ; ++x )
+		for( uint32_t x = 0 ; x < _resolution - 1 ; ++x )
 		{
-			u32 i = y * _resolution + x;
+			uint32_t i = y * _resolution + x;
 
 			m_Indices[ idx++ ] = i;
 			m_Indices[ idx++ ] = i + _resolution;
@@ -101,7 +100,7 @@ bool GridMesh::UploadToGPU( ID3D11Device* _pDevice )
 	if( FAILED( _pDevice->CreateBuffer( &desc, &data, &m_pVB ) ) )
 		return false;
 
-	desc.ByteWidth = sizeof( u32 ) * m_Indices.size();
+	desc.ByteWidth = sizeof( uint32_t ) * m_Indices.size();
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	data.pSysMem = &m_Indices[ 0 ];

@@ -30,17 +30,18 @@ Mapzen terrain tiles) and aerial imagery (HERE) so real terrain can be used as a
 
 - C++ / **MFC** (Visual Studio "MFC Application" with docking panes)
 - **Direct3D 11** compute/vertex/pixel shaders (HLSL in `Shaders/`, compiled at runtime)
-- **TinyXml2** for project files and **OpenSSL** for HTTPS tile downloads (used by the code, not provided by the build)
-- Yuka's in-house libraries **xtm/Core** and **SimpleD3DFramework** (used by the code, not part of this repo)
+- **TinyXml2** for project files (fetched by CMake) and **OpenSSL** for HTTPS tile downloads (not provided by the build)
+- Yuka's in-house **xtm/Core** (subset vendored in `Core/`) and **SimpleD3DFramework** (not available)
 
 ## Building
 
 The project is built with **CMake** and the **Visual Studio 2022 (v143)** toolset.
 
-> ⚠️ **The build is currently incomplete.** The CMake project only links Windows SDK system
-> libraries. The source still includes headers from libraries that aren't in this repo
-> (`Core/*` and `Renderer.h` from Yuka's xtm/SimpleD3DFramework, `TinyXml2`, `openssl/*`),
-> so compilation fails until those dependencies are vendored or replaced.
+> ⚠️ **The build is currently incomplete.** Dependencies are the Windows SDK, TinyXml2
+> (fetched by CMake), and a subset of xtm/Core vendored in `Core/`. The renderer layer
+> (SimpleD3DFramework: `g_Renderer`, `D3DObject`, `ConstantBuffer`) and OpenSSL (used by the
+> DEM Grabber) are not provided, so GeoGen doesn't compile yet. JPG and PNG loading are disabled
+> in the vendored `Bitmap` code.
 
 ### Requirements
 

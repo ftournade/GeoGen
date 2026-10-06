@@ -15,7 +15,7 @@ public:
 	virtual ~ErosionNode();
 
 	virtual bool OnResolutionChanged();
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	//Used by LiveSim
 	virtual void InitSim();

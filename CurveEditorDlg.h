@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Core/Win32BackBuffer.h>
-#include <Core/Keyframer.h>
 
 #define WM_CURVE_CHANGED (WM_USER + 35)
 

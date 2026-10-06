@@ -20,7 +20,7 @@ public:
 
 	virtual bool OneTimeInit();
 
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 protected:
 	virtual void InternalCompute();

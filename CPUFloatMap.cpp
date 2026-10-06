@@ -28,7 +28,7 @@ CPUFloatMap::~CPUFloatMap()
 	SAFE_DELETE( m_pData )
 }
 
-void CPUFloatMap::Resize( u32 _sx, u32 _sy )
+void CPUFloatMap::Resize( uint32_t _sx, uint32_t _sy )
 {
 	SAFE_DELETE( m_pData )
 
@@ -40,11 +40,11 @@ void CPUFloatMap::Resize( u32 _sx, u32 _sy )
 
 void CPUFloatMap::Fill( float _v )
 {
-	DBG_CHECK( m_pData );
+	assert( m_pData );
 
-	u32 n = m_SX * m_SY;
+	uint32_t n = m_SX * m_SY;
 
-	for( u32 i = 0 ; i < n ; ++i )
+	for( uint32_t i = 0 ; i < n ; ++i )
 		m_pData[ i ] = _v;
 }
 

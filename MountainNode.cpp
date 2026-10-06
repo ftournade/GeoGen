@@ -28,7 +28,7 @@ MountainNode::~MountainNode()
 {
 }
 
-const Map* MountainNode::GetOutput( u32 _idx ) const
+const Map* MountainNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_Output;
 }
@@ -134,7 +134,7 @@ CDialogEx* MountainNode::GetCustomUI( CWnd* _pParent )
 	if( !pUI->Create( IDD_DIALOG_RIVER_EDITOR, _pParent ) )
 	{
 		//LOG_R( "Failed to create custom UI for node %s", GetNodeClassName() );
-		DBG_CHECK( false );
+		assert( false );
 		delete pUI;
 		return nullptr;
 	}
@@ -155,19 +155,19 @@ void MountainNode::InternalCompute()
 	//	ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
 	//	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { m_Output.GetUAV() };
 	ID3D11ShaderResourceView* srvs[3] = { m_SegmentBufferSRV, nullptr, nullptr };
-	u32 numSrvs = 1;
+	uint32_t numSrvs = 1;
 	
 	//Add optional disto srvs
 
-	for( u32 i = 0 ; i < m_InputSlots.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_InputSlots.size() ; ++i )
 	{
 		const InputSlot& slot = m_InputSlots[i];
 
@@ -186,7 +186,7 @@ void MountainNode::InternalCompute()
 			}
 		}
 
-		//DBG_CHECK( !inputNode->IsDirty() );
+		//assert( !inputNode->IsDirty() );
 
 		const Map* inputMap = inputNode->GetOutput( slot.m_RemoteOutputSlot.m_SlotIndex );
 

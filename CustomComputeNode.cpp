@@ -11,19 +11,19 @@ CustomComputeNode::CustomComputeNode() :
 	SetUIName( "HLSL" );
 }
 
-CustomComputeNode::CustomComputeNode( u32 _numInputSlots, u32 _numOutputSlots ) :
+CustomComputeNode::CustomComputeNode( uint32_t _numInputSlots, uint32_t _numOutputSlots ) :
 	m_pHLSLPrefix( nullptr ),
 	m_pHLSLBody( nullptr ),
 	m_threadGroupSizeX( 32 ),
 	m_threadGroupSizeY( 32 ),
 	m_bConstantBufferIsDirty( true )
 {
-	for( u32 i = 0 ; i < _numInputSlots ; ++i )
+	for( uint32_t i = 0 ; i < _numInputSlots ; ++i )
 	{
 		AddInput( "FloatMap", IOType::Float );
 	}
 
-	for( u32 i = 0 ; i < _numOutputSlots ; ++i )
+	for( uint32_t i = 0 ; i < _numOutputSlots ; ++i )
 	{
 		AddOutput( "FloatMap", IOType::Float );
 	}
@@ -38,7 +38,7 @@ void CustomComputeNode::AddOutput( const char* _name, IOType _type )
 	m_Outputs.resize( m_Outputs.size() + 1 );
 }
 
-void CustomComputeNode::SetThreadGroupSize( u32 _threadGroupSizeX, u32 _threadGroupSizeY )
+void CustomComputeNode::SetThreadGroupSize( uint32_t _threadGroupSizeX, uint32_t _threadGroupSizeY )
 {
 	m_threadGroupSizeX = _threadGroupSizeX;
 	m_threadGroupSizeY = _threadGroupSizeY;
@@ -60,7 +60,7 @@ void CustomComputeNode::SetHLSLBody( const char* _code )
 
 bool CustomComputeNode::OnResolutionChanged()
 {
-	for( u32 i = 0 ; i < m_Outputs.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_Outputs.size() ; ++i )
 	{
 		DXGI_FORMAT fmt = m_Outputs[ i ].GetFormat();
 
@@ -85,7 +85,7 @@ bool CustomComputeNode::OnResolutionChanged()
 
 void CustomComputeNode::InternalCompute()
 {
-	DBG_CHECK( IsDirty() );
+	assert( IsDirty() );
 
 	if( !m_pComputeShader && !CompileShader() )
 		return;
@@ -96,9 +96,9 @@ void CustomComputeNode::InternalCompute()
 
 	//Bind inputs
 	ID3D11ShaderResourceView* srvs[ 8 ];
-	u32 numSrvs = 0;
+	uint32_t numSrvs = 0;
 
-	for( u32 i = 0 ; i < m_InputSlots.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_InputSlots.size() ; ++i )
 	{
 		const InputSlot& slot = m_InputSlots[ i ];
 
@@ -117,7 +117,7 @@ void CustomComputeNode::InternalCompute()
 			}
 		}
 
-		//DBG_CHECK( !inputNode->IsDirty() );
+		//assert( !inputNode->IsDirty() );
 
 		const Map* inputMap = inputNode->GetOutput( slot.m_RemoteOutputSlot.m_SlotIndex );
 
@@ -147,9 +147,9 @@ void CustomComputeNode::InternalCompute()
 
 	//Bind outputs
 	ID3D11UnorderedAccessView* uavs[ 8 ];
-	u32 numUavs = 0;
+	uint32_t numUavs = 0;
 
-	for( u32 i = 0 ; i < m_OutputSlots.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_OutputSlots.size() ; ++i )
 	{
 		const OutputSlot& slot = m_OutputSlots[ i ];
 
@@ -164,8 +164,8 @@ void CustomComputeNode::InternalCompute()
 
 	pDevCtx->CSSetShader( m_pComputeShader, nullptr, 0 );
 
-	u32 numGroupsX = (GetResolution() + m_threadGroupSizeX - 1) / m_threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + m_threadGroupSizeY - 1) / m_threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + m_threadGroupSizeX - 1) / m_threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + m_threadGroupSizeY - 1) / m_threadGroupSizeY;
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 
@@ -216,7 +216,7 @@ bool CustomComputeNode::CompileShader()
 {
 	//Create constant buffer (TODO move that elsewhere)
 
-	u32 numConstants = 0;
+	uint32_t numConstants = 0;
 
 	for( const ParamSlot & slot : m_ParameterSlots )
 	{
@@ -242,16 +242,16 @@ bool CustomComputeNode::CompileShader()
 
 	//Generate shader code
 
-	Str shaderCode;
+	std::string shaderCode;
 
 	//IO textures
 
-	for( u32 i = 0 ; i < m_InputSlots.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_InputSlots.size() ; ++i )
 	{
 		shaderCode += Format( "Texture2D<%s> _input%d : register(t%d);\n", GetIOHLSLTypeString( m_InputSlots[ i ].m_DataType, GetRemoteInputMap(i) ), i, i );
 	}
 
-	for( u32 i = 0 ; i < m_OutputSlots.size() ; ++i )
+	for( uint32_t i = 0 ; i < m_OutputSlots.size() ; ++i )
 	{
 		shaderCode += Format( "RWTexture2D<%s> _output%d : register(u%d);\n", GetIOHLSLTypeString( m_OutputSlots[ i ].m_DataType, &m_Outputs[i] ), i, i );
 	}
@@ -275,7 +275,7 @@ bool CustomComputeNode::CompileShader()
 
 		shaderCode += "cbuffer Constants : register(b0)\n{\n";
 
-		u32 padding = 0;
+		uint32_t padding = 0;
 
 		for( const ParamSlot & slot : m_ParameterSlots )
 		{
@@ -369,7 +369,7 @@ bool CustomComputeNode::CompileShader()
 
 void CustomComputeNode::UpdateConstantBuffer()
 {
-	u32 numConstants = 0;
+	uint32_t numConstants = 0;
 
 	for( const ParamSlot & slot : m_ParameterSlots )
 	{
@@ -396,7 +396,7 @@ void CustomComputeNode::UpdateConstantBuffer()
 
 	vector< cst4 > constants( numConstants ); //TODO handle integers
 
-	u32 i = 0;
+	uint32_t i = 0;
 
 	for( const ParamSlot & slot : m_ParameterSlots )
 	{

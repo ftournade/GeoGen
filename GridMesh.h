@@ -1,9 +1,5 @@
 #pragma once
 
-//#include <Core/Vec2.h>
-#include <Core/Str.h>
-#include <Core/TVector.h>
-#include <Renderer.h>
 
 using namespace xtm; //Bof ...
 extern Renderer g_Renderer; //tmp hack
@@ -16,7 +12,7 @@ public:
 
 	bool Init( Renderer& _renderer, ID3DBlob* _pCompiledShaderTerrain );
 
-	bool CreateGrid( ID3D11Device* _pDevice, u32 _resolution );
+	bool CreateGrid( ID3D11Device* _pDevice, uint32_t _resolution );
 
 	void ComputeNormals();
 
@@ -34,7 +30,7 @@ private:
 	//CPU Data
 
 	TVector< Vec2 > m_Vertices;
-	TVector< u32 > m_Indices;
+	TVector< uint32_t > m_Indices;
 
 	//	AABBox<float> m_bbox;
 

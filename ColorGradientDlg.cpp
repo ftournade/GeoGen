@@ -64,7 +64,7 @@ void ColorGradientWnd::PreSubclassWindow()
 {
 	if( !m_wndColorPicker.Create( nullptr, _T( "Color Picker" ), WS_CHILD | WS_VISIBLE, CRect( 0, 0, 100, 100 ), this, 636 ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		return;
 	}	
 
@@ -158,7 +158,7 @@ void ColorGradientWnd::OnPaint()
 	int kfX1 = m_RampRect.CenterPoint().x - KeyframeUISize;
 	int kfX2 = m_RampRect.CenterPoint().x + KeyframeUISize;
 
-	u32 iKey = 0;
+	uint32_t iKey = 0;
 
 	for( const Keyframe<Color>& kf : m_ColorGradient.GetKeys() )
 	{
@@ -189,7 +189,7 @@ int ColorGradientWnd::MouseHitTestKeyframe( const CPoint& p ) //-1 if not found,
 	int kfX1 = m_RampRect.CenterPoint().x - KeyframeUISize;
 	int kfX2 = m_RampRect.CenterPoint().x + KeyframeUISize;
 
-	u32 i = 0;
+	uint32_t i = 0;
 
 	for( const Keyframe<Color>& kf : m_ColorGradient.GetKeys() )
 	{
@@ -227,7 +227,7 @@ void ColorGradientWnd::OnLButtonDown( UINT nFlags, CPoint point )
 
 			m_SelectedKeyFrame = m_ColorGradient.AddKey( t, m_wndColorPicker.m_Color );
 
-			DBG_CHECK( m_SelectedKeyFrame != -1 );
+			assert( m_SelectedKeyFrame != -1 );
 		}
 
 		m_bDraggingKey = true;
@@ -282,7 +282,7 @@ void ColorGradientWnd::OnMouseMove( UINT nFlags, CPoint point )
 
 		m_SelectedKeyFrame = -1;
 
-		u32 i = 0;
+		uint32_t i = 0;
 		for( const Keyframe<Color>& key : m_ColorGradient.GetKeys() )
 		{
 			if( ( key.Time == t ) && ( key.Key == c ) )

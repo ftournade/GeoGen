@@ -131,7 +131,7 @@ void CurveEditorControl::OnPaint()
 		pMemDC->LineTo( TransformCurveToScreen( r, curvePt.x, curvePt.y ) );
 	}
 
-	u32 n = m_Curve.GetKeys().size();
+	uint32_t n = m_Curve.GetKeys().size();
 
 	for( int i = 0; i < n ; ++i )
 	{
@@ -172,7 +172,7 @@ void CurveEditorControl::OnLButtonDown( UINT nFlags, CPoint point )
 
 	m_DraggedKeyframe = -1;
 
-	u32 n = m_Curve.GetKeys().size();
+	uint32_t n = m_Curve.GetKeys().size();
 
 	for( int i = 0; i < n; ++i )
 	{
@@ -251,7 +251,7 @@ void CurveEditorControl::OnRButtonUp( UINT nFlags, CPoint point )
 	CRect r;
 	GetClientRect( &r );
 
-	u32 n = m_Curve.GetKeys().size();
+	uint32_t n = m_Curve.GetKeys().size();
 	int i;
 
 	for( i = 0; i < n; ++i )

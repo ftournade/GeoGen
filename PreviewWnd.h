@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Core/Camera.h>
 #include "GridMesh.h"
 
 class ComputeNode;
@@ -12,7 +11,7 @@ struct TerrainConstants //TODO Share HLSL/C++ struct
 	xtm::Mat44 c_WorldViewProjMatrix;
 
 	float c_TerrainExtent;
-	u32 c_TerrainResolution;
+	uint32_t c_TerrainResolution;
 	float c_MinAltitude;
 	float c_MaxAltitude;
 	//float pad;

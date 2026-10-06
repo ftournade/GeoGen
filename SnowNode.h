@@ -18,7 +18,7 @@ public:
 	virtual bool OneTimeInit();
 
 	virtual bool OnResolutionChanged();
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	virtual void InitSim();
 	virtual void StepSim( bool _rebindResources, bool _unbindResourcesOnExit );

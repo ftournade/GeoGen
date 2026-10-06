@@ -17,7 +17,7 @@ BlurNode::~BlurNode()
 {
 }
 
-const Map* BlurNode::GetOutput( u32 _idx ) const
+const Map* BlurNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_Output;
 }
@@ -58,11 +58,11 @@ void BlurNode::InternalCompute()
 	ID3D11SamplerState* samplers[] = { g_Renderer.GetBilinearClampSampler() };
 	pDevCtx->CSSetSamplers( 0, countof( samplers ), samplers );
 	
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	//Horizontal blur pass
 	ID3D11UnorderedAccessView* uavsHoriz[] = { m_IntermediateOutput.GetUAV() };

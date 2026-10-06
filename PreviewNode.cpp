@@ -22,7 +22,7 @@ bool PreviewNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* PreviewNode::GetOutput( u32 _idx ) const
+const Map* PreviewNode::GetOutput( uint32_t _idx ) const
 {
 	return nullptr;
 }

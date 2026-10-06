@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ScatterMapNode.h"
 
-#include <Core/Mat33.h>
 
 ScatterMapNode::ScatterMapNode() :
 	m_SplatCount(0)
@@ -118,7 +117,7 @@ void ScatterMapNode::OnInputConnectionChanged( int _slot )
 */
 }
 
-const Map* ScatterMapNode::GetOutput( u32 _idx ) const
+const Map* ScatterMapNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_Output;
 }
@@ -176,7 +175,7 @@ bool ScatterMapNode::CompileShaders()
 	const char* dataType = bIsColorMode ? "float4" : "float";
 	int blendType = m_ParameterSlots[ m_ParamBlendMode ].m_Value.i;
 
-	Str shaderSource( Format( strShader, dataType, dataType, dataType, blendType ) );
+	std::string shaderSource( Format( strShader, dataType, dataType, dataType, blendType ) );
 
 	ID3DBlob* pCompiledVS;
 
@@ -244,8 +243,8 @@ bool ScatterMapNode::UpdateVertexBuffer()
 		{ {  1, -1 }, { 1, 0 }, 1.0f }
 	};
 
-	u32 numSplats = m_SplatCount;
-	u32 gridSize;
+	uint32_t numSplats = m_SplatCount;
+	uint32_t gridSize;
 
 	if( distributionMethod == 1) //jittered grid
 	{ 
@@ -253,7 +252,7 @@ bool ScatterMapNode::UpdateVertexBuffer()
 		m_SplatCount = gridSize * gridSize;
 	}
 
-	for( u32 iSplat = 0 ; iSplat < m_SplatCount ; ++iSplat )
+	for( uint32_t iSplat = 0 ; iSplat < m_SplatCount ; ++iSplat )
 	{
 		Vec2 splatPos;
 		
@@ -288,7 +287,7 @@ bool ScatterMapNode::UpdateVertexBuffer()
 		if( bScaleIntensityBySize )
 			intensity *= scale;
 
-		u32 baseIdx = iSplat * 6;
+		uint32_t baseIdx = iSplat * 6;
 
 		vertices[ baseIdx     ].Pos = m.TransformPosition( unitSquareVtx[ 0 ].Pos );
 		vertices[ baseIdx     ].UV = unitSquareVtx[ 0 ].UV;

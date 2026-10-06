@@ -8,18 +8,22 @@ See README.md for features and build steps.
 - CMake only (`CMakeLists.txt` + `CMakePresets.json`): `cmake --preset vs2022`, then
   `cmake --build --preset release` (or `debug`). Generator is VS 2022, toolset v143, x64, and the
   build dir is `build/` (ignored by git). There are no tests and no CI.
-- **The build is intentionally incomplete.** The CMake project must reference only files in
-  this repo plus Windows SDK system libs (`d3d11`, `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`).
-  Don't add OpenSSL, xtm/Core, SimpleD3DFramework, TinyXml2, NVAPI or any other out-of-repo
-  path. The C++ still includes `Core/*`, `Renderer.h`, `TinyXml2/*` and `openssl/*`, so it won't
-  compile until those are dealt with.
+- **The build is intentionally incomplete.** Dependencies are limited to: Windows SDK system
+  libs (`d3d11`, `dxgi`, `dxguid`, `d3dcompiler`, `ws2_32`), TinyXml2 11.0.0 via `FetchContent`,
+  and the xtm/Core subset vendored in `Core/`. Don't add OpenSSL,
+  NVAPI, libjpeg, squish, LightZPNG or any out-of-repo path. SimpleD3DFramework (`g_Renderer`,
+  `D3DObject<T>`, `ConstantBuffer<T>`) is not in xtm and has no replacement yet.
+- `Core/` is a subset of github.com/ftournade/xtm's `Core/`. It's compiled directly into the
+  GeoGen executable (`SRC_CORE` list, same PCH and Unicode settings). Don't make it a separate
+  library. `Core/xtm_prelude.h` replaces `Core/stdafx.h` (never include that). Local changes:
+  JPG/DXT disabled in `Bitmap.cpp`, `Bitmap_PNG_Unsupported.cpp` instead of `Bitmap_PNG.cpp`,
+  and `DLLMain.h`/`CORE_API` removed. GeoGen gets the Core headers through `stdafx.h`.
 - The source file list in `CMakeLists.txt` is explicit (no globbing). New `.cpp/.h` files
   must be added to the matching `SRC_*` list, which also sets their IDE folder.
 - `stdafx.h` is the precompiled header (`target_precompile_headers`, which also force-includes it).
   MFC is a shared DLL (`CMAKE_MFC_FLAG 2` + `_AFXDLL`), Unicode, and the entry point is
   `/ENTRY:wWinMainCRTStartup`.
-- This machine's VS2022 install has ATL but **not MFC** for v143, so MSBuild stops with MSB8041
-  until the "C++ MFC for latest v143 build tools" component is installed.
+- Building requires the "C++ MFC for latest v143 build tools" VS component (otherwise MSB8041).
 - Shaders load from the relative path `Shaders/*.hlsl` at runtime and are never compiled
   offline (`HEADER_FILE_ONLY`). A post-build step copies `Shaders/` next to the exe, and the VS
   debugger working directory is the repo root.

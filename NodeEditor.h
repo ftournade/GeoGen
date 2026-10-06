@@ -46,8 +46,8 @@ public:
 	void DrawWithMFC( const CRect& _wndRect, CDC* dc );
 	void DrawWithD3D11( const CRect& _wndRect );
 //private:
-	bool CreateLink(	shared_ptr<ComputeNode> _nodeA, u32 _slotIndexA, //source
-						shared_ptr<ComputeNode> _nodeB, u32 _slotIndexB );//dest
+	bool CreateLink(	shared_ptr<ComputeNode> _nodeA, uint32_t _slotIndexA, //source
+						shared_ptr<ComputeNode> _nodeB, uint32_t _slotIndexB );//dest
 
 	void OnResolutionChange();
 protected:

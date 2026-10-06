@@ -1,17 +1,10 @@
 #include "stdafx.h"
 #include "HTTPConnection.h"
 
-#include <openssl/bio.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include <openssl/x509.h>
-#include <openssl/x509_vfy.h>
 
 #include <string>
 using namespace std;
 
-#include <Core/Log.h>
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -166,14 +159,14 @@ int GetHeaderLength( const char* content )
 	return ofset;
 }
 /*
-byte* ReadUrl2( const char *szUrl, u32 &bytesReturnedOut, char **headerOut )
+byte* ReadUrl2( const char *szUrl, uint32_t &bytesReturnedOut, char **headerOut )
 {
 	const int bufSize = 256*1024;
 	char readBuffer[ bufSize ], sendBuffer[ bufSize ], tmpBuffer[ bufSize ];
 	char *tmpResult = NULL, *result;
 	SOCKET conn;
 	string server, filepath, filename;
-	u32 totalBytesRead, headerLen;
+	uint32_t totalBytesRead, headerLen;
 	int thisReadSize;
 
 	ParseUrl( szUrl, server, filepath, filename );
@@ -212,7 +205,7 @@ byte* ReadUrl2( const char *szUrl, u32 &bytesReturnedOut, char **headerOut )
 	}
 
 	headerLen = GetHeaderLength( tmpResult );
-	u32 contenLen = totalBytesRead - headerLen;
+	uint32_t contenLen = totalBytesRead - headerLen;
 	result = new char[ contenLen + 1 ];
 	memcpy( result, tmpResult + headerLen, contenLen );
 	result[ contenLen ] = 0x0;
@@ -228,13 +221,13 @@ byte* ReadUrl2( const char *szUrl, u32 &bytesReturnedOut, char **headerOut )
 	return (byte*)result;
 }
 */
-byte* HTTPConnection::DownloadFile( const char* _url, u32& _fileSize, bool _ssl )
+byte* HTTPConnection::DownloadFile( const char* _url, uint32_t& _fileSize, bool _ssl )
 {
 	const int bufSize = 64 * 1024;
 	char readBuffer[ bufSize ], sendBuffer[ bufSize ], tmpBuffer[ bufSize ];
 	char *tmpResult = NULL, *result;
 	char *headerBuffer = nullptr;
-	u32 totalBytesRead, headerLen;
+	uint32_t totalBytesRead, headerLen;
 	int thisReadSize;
 
 	string server, filepath, filename;
@@ -285,7 +278,7 @@ byte* HTTPConnection::DownloadFile( const char* _url, u32& _fileSize, bool _ssl 
 */
 			if( !ConnectToServer( server.c_str(), 80, _ssl ) ) //try reconnecting
 			{
-				DBG_CHECK( false );
+				assert( false );
 				return nullptr;
 			}
 
@@ -305,7 +298,7 @@ byte* HTTPConnection::DownloadFile( const char* _url, u32& _fileSize, bool _ssl 
 	}
 
 	headerLen = GetHeaderLength( tmpResult );
-	u32 contenLen = totalBytesRead - headerLen;
+	uint32_t contenLen = totalBytesRead - headerLen;
 	result = new char[ contenLen + 1 ];
 	memcpy( result, tmpResult + headerLen, contenLen );
 	result[ contenLen ] = 0x0;

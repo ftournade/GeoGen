@@ -12,7 +12,6 @@
 #include "NodeEditor.h"
 #include "HTTPConnection.h"
 
-#include <Core/Log.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -287,7 +286,7 @@ void CGeoGenApp::OnOpenSettings()
 	m_MinAltitude = dlg.m_MinAltitude;
 	m_MaxAltitude = dlg.m_MaxAltitude;
 	m_SeaLevel = dlg.m_SeaLevel;
-	m_TerrainExtent = (u32)(dlg.m_TerrainExtentKM * 1000.0f);
+	m_TerrainExtent = (uint32_t)(dlg.m_TerrainExtentKM * 1000.0f);
 
 	m_CamFOV = dlg.m_CamFOV;
 	m_CamNearClip = dlg.m_CamNearClip;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Core/Win32BackBuffer.h>
-#include <Renderer.h>
 
 class NodeEditorView : public CWnd
 {

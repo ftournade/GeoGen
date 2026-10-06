@@ -1,7 +1,6 @@
 #pragma once
 #include "ComputeNode.h"
 
-#include <Core/Keyframer.h>
 
 class CurveNode : public ComputeNode
 {
@@ -13,7 +12,7 @@ public:
 	
 	virtual bool OneTimeInit();
 
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	virtual CDialogEx* GetCustomUI( CWnd* _pParent );
 

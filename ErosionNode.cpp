@@ -37,21 +37,21 @@ ErosionNode::ErosionNode()
 		|| !g_Renderer.CreateShader( "Shaders/Erosion.hlsl", "WaterEvaporation", nullptr, &m_WaterEvaporationCS )
 		|| !g_Renderer.CreateShader( "Shaders/Erosion.hlsl", "DepositAllSuspendedSoil", nullptr, &m_DepositAllSuspendedSoilCS ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
 
 	if( !m_CB.Init( g_Renderer.GetDevice() ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
 	if( !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "VSMainErosion", nullptr, &m_pPreviewVertexShader )  //assume same input layout as m_pTerrainVertexShader
 	 || !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "PSMainErosion", nullptr, &m_pPreviewPixelShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 }
@@ -85,7 +85,7 @@ bool ErosionNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* ErosionNode::GetOutput( u32 _idx ) const
+const Map* ErosionNode::GetOutput( uint32_t _idx ) const
 {
 	switch( _idx )
 	{
@@ -166,7 +166,7 @@ void ErosionNode::StepSim( bool _rebindResources, bool _unbindResourcesOnExit )
 			m_ThermalErosionOutFlowMap2.GetUAV()
 		};
 
-		u32 numUAVs = sizeof( uavs ) / sizeof( uavs[ 0 ] );
+		uint32_t numUAVs = sizeof( uavs ) / sizeof( uavs[ 0 ] );
 
 		pDevCtx->CSSetUnorderedAccessViews( 0, numUAVs, uavs, nullptr );
 
@@ -174,11 +174,11 @@ void ErosionNode::StepSim( bool _rebindResources, bool _unbindResourcesOnExit )
 		pDevCtx->CSSetSamplers( 0, 1, samplers );
 	}
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11ShaderResourceView*  suspendedSoilSRVs[] = { m_SuspendedSoilMap[ 0 ].GetSRV(), m_SuspendedSoilMap[ 1 ].GetSRV() };
 	ID3D11UnorderedAccessView* suspendedSoilUAVs[] = { m_SuspendedSoilMap[ 0 ].GetUAV(), m_SuspendedSoilMap[ 1 ].GetUAV() };
@@ -265,11 +265,11 @@ void ErosionNode::InternalCompute()
 
 	//Deposit all suspended soil
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 	
 	pDevCtx->CSSetShader( m_DepositAllSuspendedSoilCS, nullptr, 0 );
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );

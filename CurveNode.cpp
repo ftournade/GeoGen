@@ -4,7 +4,6 @@
 #include "CurveEditorDlg.h"
 #include "resource.h"
 
-#include <Core/Log.h>
 
 #define CURVE_RES 1024
 
@@ -50,7 +49,7 @@ CDialogEx* CurveNode::GetCustomUI( CWnd* _pParent )
 	if( !pUI->Create( IDD_DIALOG_CURVE_EDITOR, _pParent ) )
 	{
 		LOG_R( "Failed to create custom UI for node %s", GetNodeClassName() );
-		DBG_CHECK( false );
+		assert( false );
 		delete pUI;
 		return nullptr;
 	}
@@ -77,14 +76,14 @@ bool CurveNode::OneTimeInit()
 
 	if( !g_Renderer.CreateShaderFromMemory( g_CurveCS, "Main", nullptr, &m_pComputeShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		LOG_R( "CurveNode: shader failed to compile" );
 		return false;
 	}
 
 	if( !m_GPUCurveLookUp.Init( CURVE_RES, 1, DXGI_FORMAT_R32_FLOAT, D3D11_BIND_SHADER_RESOURCE ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		LOG_R( "CurveNode: failed to create color ramp texture" );
 		return false;
 	}
@@ -99,23 +98,23 @@ void CurveNode::OnCurveChanged()
 	float curve[ CURVE_RES ];
 	ZeroMemory( curve, sizeof( curve ) );
 
-	u32 samples = CURVE_RES * 8;
+	uint32_t samples = CURVE_RES * 8;
 
 	for( int i = 0 ; i < samples ; ++i )
 	{
 		float t = (float)i / (float)(samples - 1);
 		Vec2 val = m_Curve.GetValue( t );
 
-		s32 idx = val.x * (float)(CURVE_RES - 1);
-		DBG_CHECK( idx >= 0 && idx < CURVE_RES );
-		idx = Clamp<s32>( idx, 0, CURVE_RES - 1 );
+		int32_t idx = val.x * (float)(CURVE_RES - 1);
+		assert( idx >= 0 && idx < CURVE_RES );
+		idx = Clamp<int32_t>( idx, 0, CURVE_RES - 1 );
 		curve[ idx ] = val.y;
 	}
 
 	g_Renderer.GetImmediateDeviceContext()->UpdateSubresource( m_GPUCurveLookUp.GetTex(), 0, nullptr, curve, sizeof( curve ), 0 );
 }
 
-const Map* CurveNode::GetOutput( u32 _idx ) const
+const Map* CurveNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_Output;
 }
@@ -157,11 +156,11 @@ void CurveNode::InternalCompute()
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 

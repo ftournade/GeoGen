@@ -23,7 +23,6 @@
 #include "NodeFactory.h"
 
 #include "GeoGen.h" //to trigger preview redraw
-#include <Core/Log.h>
 
 #define GEOGEN_VERSION_MAJOR 0
 #define GEOGEN_VERSION_MINOR 1
@@ -34,14 +33,14 @@ Vec2 g_LastNodeEditorMousePos;
 
 shared_ptr<ComputeNode> g_DragNode;
 Vec2 g_ToolTipPos;
-Str g_ToolTipText;
+std::string g_ToolTipText;
 
 shared_ptr<ComputeNode> g_HoveringNode;
-u32 g_HoveringSlotIndex = 0;
+uint32_t g_HoveringSlotIndex = 0;
 IOSlotCategory g_HoveringSlotCategory = IOSlotCategory::Input;
 
 shared_ptr<ComputeNode> g_DragLink_Node;
-u32 g_DragLink_SlotIndex = 0;
+uint32_t g_DragLink_SlotIndex = 0;
 IOSlotCategory g_DragLink_SlotCategory = IOSlotCategory::Input;
 
 //////////////////////////////////////////
@@ -189,7 +188,7 @@ shared_ptr<ComputeNode> NodeEditor::MouseHitTest( const UIRect& _screenRect, con
 		{
 			Vec2 relativePos = p - pNode->m_UIRect.Pos;
 
-			for( u32 i=0 ; i < pNode->m_InputSlots.size() ; ++i )
+			for( uint32_t i=0 ; i < pNode->m_InputSlots.size() ; ++i )
 			{
 				const ComputeNode::InputSlot& slot = pNode->m_InputSlots[ i ];
 
@@ -200,7 +199,7 @@ shared_ptr<ComputeNode> NodeEditor::MouseHitTest( const UIRect& _screenRect, con
 				}
 			}
 
-			for( u32 i = 0 ; i < pNode->m_OutputSlots.size() ; ++i )
+			for( uint32_t i = 0 ; i < pNode->m_OutputSlots.size() ; ++i )
 			{
 				const ComputeNode::OutputSlot& slot = pNode->m_OutputSlots[ i ];
 
@@ -377,7 +376,7 @@ void NodeEditor::DrawLink( CDC* _dc, const UIRect& _screenRect, const Vec2& _lin
 	LineTo( _dc, _linkB.x, _linkB.y );
 #else
 	//bezier curve
-	u32 detail = 24;
+	uint32_t detail = 24;
 
 	Vec2 P1 = LA;
 	Vec2 P2 = LA + Vec2( 70.0f * m_viewZoom, 0.0f );
@@ -386,7 +385,7 @@ void NodeEditor::DrawLink( CDC* _dc, const UIRect& _screenRect, const Vec2& _lin
 
 	_dc->MoveTo( (int)P1.x, (int)P1.y );
 
-	for( u32 i = 1 ; i < detail ; ++i )
+	for( uint32_t i = 1 ; i < detail ; ++i )
 	{
 		float t = (float)i / (float)(detail - 1);
 
@@ -482,7 +481,7 @@ void NodeEditor::DrawWithMFC( const CRect& _screenRect, CDC* _dc )
 		DrawShadowedText( pNode->m_UIName.c_str(), _dc, rect, DT_CENTER, (UINT)(1.0f * m_viewZoom) );
 		
 
-		Str resInfoTxt( Format( "%d ", pNode->GetResolution() ) );
+		std::string resInfoTxt( Format( "%d ", pNode->GetResolution() ) );
 		
 		if( ( pNode->GetResolutionModifier() != 1 ) && ( pNode->GetResolutionReference() != Res_Fixed ) )
 		{
@@ -509,7 +508,7 @@ void NodeEditor::DrawWithMFC( const CRect& _screenRect, CDC* _dc )
 		}
 
 
-		u32 slotIndex = 0;
+		uint32_t slotIndex = 0;
 		for( const ComputeNode::InputSlot& slot : pNode->m_InputSlots )
 		{ 
 			RECT slotRect;
@@ -610,10 +609,10 @@ void NodeEditor::DrawWithMFC( const CRect& _screenRect, CDC* _dc )
 	}
 }
 
-bool NodeEditor::CreateLink(	shared_ptr<ComputeNode> _nodeA, u32 _slotIndexA, //source
-								shared_ptr<ComputeNode> _nodeB, u32 _slotIndexB )//dest
+bool NodeEditor::CreateLink(	shared_ptr<ComputeNode> _nodeA, uint32_t _slotIndexA, //source
+								shared_ptr<ComputeNode> _nodeB, uint32_t _slotIndexB )//dest
 {
-	DBG_CHECK( _nodeA && _nodeB );
+	assert( _nodeA && _nodeB );
 
 	ComputeNode::OutputSlot& slotA = _nodeA->m_OutputSlots[ _slotIndexA ];
 	ComputeNode::InputSlot& slotB = _nodeB->m_InputSlots[ _slotIndexB ];
@@ -784,7 +783,7 @@ bool NodeEditor::Load( const char* _filename )
 		
 		if( !pNode->OneTimeInit() )
 		{
-			DBG_CHECK( false );
+			assert( false );
 			LOG_R( "Node %s failed in OneTimeInit()", pNode->GetName() );
 			continue;
 		}
@@ -823,7 +822,7 @@ bool NodeEditor::Load( const char* _filename )
 template <class T>
 int Find( const vector< T > & _vec, const T& _val )
 {
-	for( u32 i = 0 ; i < _vec.size() ; ++i )
+	for( uint32_t i = 0 ; i < _vec.size() ; ++i )
 	{
 		if( _vec[ i ] == _val )
 			return i;

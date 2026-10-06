@@ -76,7 +76,7 @@ MonteCarloErosionNode::MonteCarloErosionNode()
 	if( !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "VSMainSnow", nullptr, &m_pPreviewVertexShader )  //assume same input layout as m_pTerrainVertexShader
 	 || !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "PSMainSnow", nullptr, &m_pPreviewPixelShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
@@ -137,7 +137,7 @@ bool MonteCarloErosionNode::OnResolutionChanged()
 	return true;
 }
 
-const Map* MonteCarloErosionNode::GetOutput( u32 _idx ) const
+const Map* MonteCarloErosionNode::GetOutput( uint32_t _idx ) const
 {
 	ComputeTotalTerrainAltitude(); //TODO lazy eval (cache)
 
@@ -193,11 +193,11 @@ void MonteCarloErosionNode::ComputeTotalTerrainAltitude() const
 
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { m_HeightMap.GetUAV() };
 	ID3D11ShaderResourceView* srvs[] = { 
@@ -249,11 +249,11 @@ void MonteCarloErosionNode::InitSim()
 	
 	//Init bedrock map by remapping input heightmap from [0,1] to meters
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = 
 	{ 
@@ -308,11 +308,11 @@ void MonteCarloErosionNode::SmoothSoil()
 	
 	const Map* pSmoothMap = this->GetRemoteInputMap( 3 );
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = 8;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = 8;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = 8;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = 8;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { nullptr, nullptr, m_SandMap.GetUAV() };
 	ID3D11ShaderResourceView* srvs[] = 
@@ -350,11 +350,11 @@ void MonteCarloErosionNode::ComputeHydraulicEvents()
 
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	const u32 threadGroupSizeX = 8;
-	const u32 threadGroupSizeY = 8;
+	const uint32_t threadGroupSizeX = 8;
+	const uint32_t threadGroupSizeY = 8;
 
-	u32 numGroupsX = 8;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = 8;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = 8;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = 8;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = 
 	{ 
@@ -401,11 +401,11 @@ void MonteCarloErosionNode::ComputeGravityEvents()
 
 	ID3D11DeviceContext* pDevCtx = g_Renderer.GetImmediateDeviceContext();
 
-	const u32 threadGroupSizeX = 8;
-	const u32 threadGroupSizeY = 8;
+	const uint32_t threadGroupSizeX = 8;
+	const uint32_t threadGroupSizeY = 8;
 
-	u32 numGroupsX = 4;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = 4;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = 4;// (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = 4;// (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	ID3D11UnorderedAccessView* uavs[] = { nullptr, nullptr, m_SandMap.GetUAV() };
 	ID3D11ShaderResourceView* srvs[] = { pBedRockHardnessMap ? pBedRockHardnessMap->GetSRV() : g_Renderer.GetWhiteTexture(),

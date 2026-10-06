@@ -1,6 +1,5 @@
 #pragma once
 #include <map>
-#include <Core/Str.h>
 using namespace xtm;//TODO ....
 
 class ComputeNode;
@@ -25,7 +24,7 @@ public:
 
 	struct NodeInfo
 	{
-		Str m_ClassName, m_UIName;
+		std::string m_ClassName, m_UIName;
 		NodeCategory m_Category;
 		CreateNodeFn m_Factory;
 	};

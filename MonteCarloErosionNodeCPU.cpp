@@ -47,7 +47,7 @@ MonteCarloErosionNodeCPU::MonteCarloErosionNodeCPU()
 	if( !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "VSMainErosion2", nullptr, &m_pPreviewVertexShader )  //assume same input layout as m_pTerrainVertexShader
 	 || !g_Renderer.CreateShader( "Shaders/Terrain.hlsl", "PSMainErosion2", nullptr, &m_pPreviewPixelShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		//return false; //TODO not in constructor, have an Init method
 	}
 
@@ -78,7 +78,7 @@ bool MonteCarloErosionNodeCPU::OnResolutionChanged()
 	return true;
 }
 
-const Map* MonteCarloErosionNodeCPU::GetOutput( u32 _idx ) const
+const Map* MonteCarloErosionNodeCPU::GetOutput( uint32_t _idx ) const
 {
 	switch( _idx )
 	{
@@ -180,7 +180,7 @@ bool MonteCarloErosionNodeCPU::PickRandomDownhillNeighboor( const Vec2i& _p, con
 	if( bReachedLocalMinimum )
 		return false;
 
-	u32 ngbIndex = randomPickDirection.PickRandomly();
+	uint32_t ngbIndex = randomPickDirection.PickRandomly();
 
 	_ngb = _p + neighboor[ ngbIndex ];
 	_slope = ngb_slope[ ngbIndex ];

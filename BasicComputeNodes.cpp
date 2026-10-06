@@ -5,7 +5,6 @@
 
 #include "resource.h"
 
-#include <Core/Log.h>
 
 CDialogEx* ConstantColorNode::GetCustomUI( CWnd* _pParent )
 {
@@ -19,7 +18,7 @@ CDialogEx* ConstantColorNode::GetCustomUI( CWnd* _pParent )
 	if( !pUI->Create( IDD_DLG_COLOR_PICKER, _pParent ) )
 	{
 		LOG_R( "Failed to create custom UI for node %s", GetNodeClassName() );
-		DBG_CHECK( false );
+		assert( false );
 		delete pUI;
 		return nullptr;
 	}

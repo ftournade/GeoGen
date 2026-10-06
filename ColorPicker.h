@@ -1,7 +1,6 @@
 #pragma once
 #include "afxwin.h"
 
-#include <Core/Win32BackBuffer.h>
 
 #define WM_COLORPICKER_CHANGED (WM_USER + 24)
 

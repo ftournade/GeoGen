@@ -144,7 +144,7 @@ void RiverEditorControl::OnPaint()
 		pMemDC->LineTo( TransformRiverToScreen( r, curvePt.x, curvePt.y ) );
 	}
 
-	u32 n = m_River.GetKeys().size();
+	uint32_t n = m_River.GetKeys().size();
 
 	for( int i = 0; i < n ; ++i )
 	{
@@ -235,7 +235,7 @@ void RiverEditorControl::OnLButtonDown( UINT nFlags, CPoint point )
 /*
 	m_DraggedKeyframe = -1;
 
-	u32 n = m_River.GetKeys().size();
+	uint32_t n = m_River.GetKeys().size();
 
 	for( int i = 0; i < n; ++i )
 	{
@@ -315,7 +315,7 @@ void RiverEditorControl::OnRButtonUp( UINT nFlags, CPoint point )
 	CRect r;
 	GetClientRect( &r );
 
-	u32 n = m_River.GetKeys().size();
+	uint32_t n = m_River.GetKeys().size();
 	int i;
 
 	for( i = 0; i < n; ++i )

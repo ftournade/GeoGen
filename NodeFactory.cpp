@@ -13,7 +13,7 @@ NodeFactory::~NodeFactory()
 
 void NodeFactory::RegisterNode( const char* _className, NodeCategory _cat, const char* _UIName, int _guid, CreateNodeFn _createFn )
 {
-	DBG_CHECK( m_NodeFactories.find( _guid ) == m_NodeFactories.end() ); //duplicate guid
+	assert( m_NodeFactories.find( _guid ) == m_NodeFactories.end() ); //duplicate guid
 
 	NodeInfo nodeInfo;
 	nodeInfo.m_ClassName = _className;

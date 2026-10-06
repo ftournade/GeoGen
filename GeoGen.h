@@ -45,21 +45,21 @@ public:
 	void StartIterativeSim( shared_ptr<ComputeNode> _pErosionNode );
 	void StopIterativeSim();
 
-	inline u32 GetResolution() const	{ return m_Resolution; }
+	inline uint32_t GetResolution() const	{ return m_Resolution; }
 	inline int GetMinAltitude() const	{ return m_MinAltitude; }
 	inline int GetMaxAltitude() const	{ return m_MaxAltitude; }
 	inline int GetSeaLevel() const		{ return m_SeaLevel; }
-	inline u32 GetTerrainExtent() const { return m_TerrainExtent; }
+	inline uint32_t GetTerrainExtent() const { return m_TerrainExtent; }
 
 private:
 	CString m_Filename;
 
 public: //stop the accesor frenzy
-	u32 m_Resolution;
+	uint32_t m_Resolution;
 	int m_MinAltitude;
 	int m_MaxAltitude;
 	int m_SeaLevel;
-	u32 m_TerrainExtent;
+	uint32_t m_TerrainExtent;
 	float m_CamFOV, m_CamNearClip, m_CamFarClip;
 public:
 	afx_msg void OnFileNew();

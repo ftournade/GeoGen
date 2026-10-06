@@ -12,7 +12,7 @@ public:
 
 	virtual bool OnResolutionChanged();
 
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	const Map* GetHeightMap() const;
 	const Map* GetAlbedoMap() const;

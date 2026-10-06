@@ -27,19 +27,19 @@ public:
 	COMPUTE_NODE_FACTORY( CustomComputeNode )
 
 	CustomComputeNode();
-	CustomComputeNode( u32 _numInputSlots, u32 _numOutputSlots );
+	CustomComputeNode( uint32_t _numInputSlots, uint32_t _numOutputSlots );
 	virtual ~CustomComputeNode() {}
 
 	void AddOutput( const char* _name, IOType _type );
 
-	void SetThreadGroupSize( u32 _threadGroupSizeX, u32 _threadGroupSizeY );
+	void SetThreadGroupSize( uint32_t _threadGroupSizeX, uint32_t _threadGroupSizeY );
 
 	void SetHLSLPrefix( const char* _code ); //includes, resource declarations
 	void SetHLSLBody( const char* _code ); //compute shader code
 
 	virtual bool OnResolutionChanged();
 
-	virtual const Map* GetOutput( u32 _idx ) const { return &m_Outputs[ _idx ]; }
+	virtual const Map* GetOutput( uint32_t _idx ) const { return &m_Outputs[ _idx ]; }
 	
 	bool SetOutputFormat( int _slot, DXGI_FORMAT _fmt );
 	
@@ -60,7 +60,7 @@ private:
 	const char* m_pHLSLBody;
 
 	vector< Map > m_Outputs;
-	u32 m_threadGroupSizeX, m_threadGroupSizeY;
+	uint32_t m_threadGroupSizeX, m_threadGroupSizeY;
 	
 	bool m_bConstantBufferIsDirty;
 };

@@ -11,7 +11,6 @@
 #include "BoolProperty.h"
 //#include "NodeEditor.h"
 
-#include <Core/Log.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -225,9 +224,9 @@ void CPropertiesWnd::Populate( shared_ptr<ComputeNode> _pNode )
 	if( m_pCustomUI )
 		m_pCustomUI->ShowWindow( SW_SHOW );
 
-	u32 paramIndex = 0;
+	uint32_t paramIndex = 0;
 
-	map< Str, CMFCPropertyGridProperty* > categories;
+	map< std::string, CMFCPropertyGridProperty* > categories;
 
 	for( const ComputeNode::ParamSlot& param : _pNode->m_ParameterSlots )
 	{
@@ -251,7 +250,7 @@ void CPropertiesWnd::Populate( shared_ptr<ComputeNode> _pNode )
 												_T( "TODO: description" ),
 												paramIndex );
 
-				for( const Str& option : param.m_Enum )
+				for( const std::string& option : param.m_Enum )
 				{
 					pProp->AddOption( CString( option.c_str() ) );
 				}
@@ -351,7 +350,7 @@ void CPropertiesWnd::SetPropListFont()
 	m_wndPropList.SetFont(&m_fntPropList);
 }
 
-bool operator==( const Str& _strA, BSTR _strB )
+bool operator==( const std::string& _strA, BSTR _strB )
 {
 	return CString( _strA.c_str() ) == _strB;
 }
@@ -382,7 +381,7 @@ LRESULT CPropertiesWnd::OnPropertyChanged( WPARAM wparam, LPARAM lparam )
 			{
 				ASSERT( val.vt == VT_BSTR );
 				int value = 0;
-				for( const Str& option : param.m_Enum )
+				for( const std::string& option : param.m_Enum )
 				{
 					if( option == val.bstrVal )
 					{

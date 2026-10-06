@@ -27,7 +27,7 @@ public:
 
 	virtual bool OneTimeInit();
 
-	virtual const Map* GetOutput( u32 _idx ) const;
+	virtual const Map* GetOutput( uint32_t _idx ) const;
 
 	virtual CDialogEx* GetCustomUI( CWnd* _pParent );
 
@@ -44,13 +44,13 @@ private:
 
 	struct Constants
 	{
-		u32 NumSegments;
-		u32 Resolution;
+		uint32_t NumSegments;
+		uint32_t Resolution;
 		float MoutainSlope;
 		float ValleyWidth;
 		float ValleyShape;
 		float Distortion;
-		u32 pad[2];
+		uint32_t pad[2];
 	};
 	
 	ConstantBuffer< Constants > m_CB;

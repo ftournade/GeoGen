@@ -3,9 +3,8 @@
 
 //TODO move to Core lib
 
-#include <Core/Debug.h>
 
-template <u32 MaxItemCount>
+template <uint32_t MaxItemCount>
 class RandomPick
 {
 public:
@@ -13,41 +12,41 @@ public:
 
 	inline void Clear();
 	inline void AddItem( float _probability );
-	inline u32 PickRandomly() const;
+	inline uint32_t PickRandomly() const;
 
 private:
 	float m_Probability[ MaxItemCount ];
 	float m_Probabilitysum;
-	u32 m_ItemCount;	
+	uint32_t m_ItemCount;	
 };
 
 
-template <u32 MaxItemCount>
+template <uint32_t MaxItemCount>
 inline void RandomPick<MaxItemCount>::Clear()
 {
 	m_ItemCount = 0;
 	m_Probabilitysum = 0.0f;
 }
 
-template <u32 MaxItemCount>
+template <uint32_t MaxItemCount>
 inline void RandomPick<MaxItemCount>::AddItem( float _probability )
 {
-	DBG_CHECK( m_ItemCount < MaxItemCount );
+	assert( m_ItemCount < MaxItemCount );
 
 	m_Probability[ m_ItemCount++ ] = _probability;
 	m_Probabilitysum += _probability;
 }
 
-template <u32 MaxItemCount>
-inline u32 RandomPick<MaxItemCount>::PickRandomly() const
+template <uint32_t MaxItemCount>
+inline uint32_t RandomPick<MaxItemCount>::PickRandomly() const
 {
-	DBG_CHECK( m_ItemCount > 0 );
+	assert( m_ItemCount > 0 );
 
 	float rnd = xtm::Random( 0.0f, m_Probabilitysum * 0.999999f );
 	
 	float sum = 0.0f;
 
-	for( u32 i = 0; i < m_ItemCount; ++i )
+	for( uint32_t i = 0; i < m_ItemCount; ++i )
 	{
 		sum += m_Probability[ i ];
 		
@@ -55,6 +54,6 @@ inline u32 RandomPick<MaxItemCount>::PickRandomly() const
 			return i;
 	}
 
-	DBG_CHECK( false ); //should never get here
+	assert( false ); //should never get here
 	return 0;
 }

@@ -4,7 +4,6 @@
 
 #include "resource.h"
 
-#include <Core/Log.h>
 
 #define COLOR_RAMP_RES 2048
 
@@ -50,7 +49,7 @@ CDialogEx* ColorGradientNode::GetCustomUI( CWnd* _pParent )
 	if( !pUI->Create( IDD_DLG_COLOR_RAMP, _pParent ) )
 	{
 		LOG_R( "Failed to create custom UI for node %s", GetNodeClassName() );
-		DBG_CHECK( false );
+		assert( false );
 		delete pUI;
 		return nullptr;
 	}
@@ -77,14 +76,14 @@ bool ColorGradientNode::OneTimeInit()
 
 	if( !g_Renderer.CreateShaderFromMemory( g_ColorGradientCS, "Main", nullptr, &m_pComputeShader ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		LOG_R( "ColorGradientNode: shader failed to compile" );
 		return false;
 	}
 
 	if( !m_GPUColorGradient.Init( COLOR_RAMP_RES, 1, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, D3D11_BIND_SHADER_RESOURCE ) )
 	{
-		DBG_CHECK( false );
+		assert( false );
 		LOG_R( "ColorGradientNode: failed to create color ramp texture" );
 		return false;
 	}
@@ -99,7 +98,7 @@ void ColorGradientNode::OnColorGradientChanged()
 	if( !m_GPUColorGradient.GetTex() )
 		return;
 
-	u32 colorRamp[ COLOR_RAMP_RES ];
+	uint32_t colorRamp[ COLOR_RAMP_RES ];
 
 	for( int i = 0 ; i < COLOR_RAMP_RES ; ++i )
 	{
@@ -113,7 +112,7 @@ void ColorGradientNode::OnColorGradientChanged()
 	g_Renderer.GetImmediateDeviceContext()->UpdateSubresource( m_GPUColorGradient.GetTex(), 0, nullptr, colorRamp, sizeof(colorRamp), 0 );
 }
 
-const Map* ColorGradientNode::GetOutput( u32 _idx ) const
+const Map* ColorGradientNode::GetOutput( uint32_t _idx ) const
 {
 	return &m_Output;
 }
@@ -152,11 +151,11 @@ void ColorGradientNode::InternalCompute()
 	ID3D11Buffer* pCB = m_CB.GetBuffer();
 	pDevCtx->CSSetConstantBuffers( 0, 1, &pCB );
 
-	const u32 threadGroupSizeX = 32;
-	const u32 threadGroupSizeY = 32;
+	const uint32_t threadGroupSizeX = 32;
+	const uint32_t threadGroupSizeY = 32;
 
-	u32 numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
-	u32 numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
+	uint32_t numGroupsX = (GetResolution() + threadGroupSizeX - 1) / threadGroupSizeX;
+	uint32_t numGroupsY = (GetResolution() + threadGroupSizeY - 1) / threadGroupSizeY;
 
 	pDevCtx->Dispatch( numGroupsX, numGroupsY, 1 );
 

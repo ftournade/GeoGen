@@ -1,13 +1,10 @@
 #include "stdafx.h"
 #include "ComputeNode.h"
 
-#include <Renderer.h>
-#include <Core/Debug.h>
-#include <Core/float16.h>
 
 #include "GeoGen.h"
 
-bool Map::Init( u32 _resX, u32 _resY, DXGI_FORMAT _fmt, UINT _bind )
+bool Map::Init( uint32_t _resX, uint32_t _resY, DXGI_FORMAT _fmt, UINT _bind )
 {
 	m_Width = _resX;
 	m_Height = _resY;
@@ -91,7 +88,7 @@ bool Map::Init( u32 _resX, u32 _resY, DXGI_FORMAT _fmt, UINT _bind )
 	return true;
 }
 
-bool Map::Init( u32 _resolution, IOType _type, UINT _bind )
+bool Map::Init( uint32_t _resolution, IOType _type, UINT _bind )
 {
 	switch( _type )
 	{
@@ -113,7 +110,7 @@ void Map::CopyFromGPU( vector<float>& _data ) const
 	D3D11_TEXTURE2D_DESC texDesc;
 	m_pTex->GetDesc( &texDesc );
 
-	u32 texelSize = (m_Format == DXGI_FORMAT_R32_FLOAT) ? 1 : 4;
+	uint32_t texelSize = (m_Format == DXGI_FORMAT_R32_FLOAT) ? 1 : 4;
 
 	_data.resize( texDesc.Width * texDesc.Height * texelSize );
 
@@ -122,7 +119,7 @@ void Map::CopyFromGPU( vector<float>& _data ) const
 
 void Map::CopyFromGPU( float* _data ) const
 {
-	DBG_CHECK( m_Format == DXGI_FORMAT_R32_FLOAT );
+	assert( m_Format == DXGI_FORMAT_R32_FLOAT );
 
 	//Create staging texture
 	////////////////////////
@@ -137,7 +134,7 @@ void Map::CopyFromGPU( float* _data ) const
 	ID3D11Texture2D* pStagingTex;
 	if( FAILED( g_Renderer.GetDevice()->CreateTexture2D( &texDesc, nullptr, &pStagingTex ) ) )
 	{
-		DBG_CHECK( false );//TODO handle error
+		assert( false );//TODO handle error
 	}
 
 	//Copy texture to staging texture
@@ -153,13 +150,13 @@ void Map::CopyFromGPU( float* _data ) const
 	D3D11_MAPPED_SUBRESOURCE rsrcMap;
 	if( FAILED( pDevCtx->Map( pStagingTex, 0, D3D11_MAP_READ, 0, &rsrcMap ) ) )
 	{
-		DBG_CHECK( false );//TODO handle error
+		assert( false );//TODO handle error
 	}
 	
 	switch( m_Format )
 	{
 		case DXGI_FORMAT_R32_FLOAT:
-			DBG_CHECK( texDesc.Width * sizeof( float ) == rsrcMap.RowPitch );
+			assert( texDesc.Width * sizeof( float ) == rsrcMap.RowPitch );
 
 			memcpy( _data, rsrcMap.pData, rsrcMap.DepthPitch );
 			break;
@@ -192,10 +189,10 @@ void Map::CopyFromGPU( float* _data ) const
 			break;
 		}
 		default:
-			DBG_CHECK( !"unsupported format" );
+			assert( !"unsupported format" );
 
 	}
-	//DBG_CHECK( texDesc.Format == DXGI_FORMAT_R32_FLOAT ); //TODO handle other formats
+	//assert( texDesc.Format == DXGI_FORMAT_R32_FLOAT ); //TODO handle other formats
 
 	pDevCtx->Unmap( pStagingTex, 0 );
 
@@ -213,7 +210,7 @@ void Map::CopyToGPU( const rgba8_t* _pData )
 
 void Map::CopyToGPU( const float* _pData )
 {
-	DBG_CHECK( m_Format == DXGI_FORMAT_R32_FLOAT );
+	assert( m_Format == DXGI_FORMAT_R32_FLOAT );
 
 	D3D11_TEXTURE2D_DESC desc;
 	m_pTex->GetDesc( &desc );
@@ -278,7 +275,7 @@ int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType 
 {
 	//TODO check no space(s) in _name
 
-	DBG_CHECK( _type == IOType::Float );
+	assert( _type == IOType::Float );
 
 	ParamSlot slot;
 	slot.m_CategoryName = _categoryName;
@@ -301,7 +298,7 @@ int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType 
 {
 	//TODO check no space(s) in _name
 
-	DBG_CHECK( _type == IOType::Integer );
+	assert( _type == IOType::Integer );
 
 	ParamSlot slot;
 	slot.m_CategoryName = _categoryName;
@@ -324,7 +321,7 @@ int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType 
 {
 	//TODO check no space(s) in _name
 
-	DBG_CHECK( _type == IOType::Color );
+	assert( _type == IOType::Color );
 
 	ParamSlot slot;
 	slot.m_CategoryName = _categoryName;
@@ -345,7 +342,7 @@ int ComputeNode::AddParam( const char* _categoryName, const char* _name, IOType 
 {
 	//TODO check no space(s) in _name
 
-	DBG_CHECK( _type == IOType::Bool );
+	assert( _type == IOType::Bool );
 
 	ParamSlot slot;
 	slot.m_CategoryName = _categoryName;
@@ -367,7 +364,7 @@ int ComputeNode::AddParam(	const char* _categoryName, const char* _name, IOType 
 {
 	//TODO check no space(s) in _name
 
-	DBG_CHECK( _type == IOType::String );
+	assert( _type == IOType::String );
 
 	ParamSlot slot;
 	slot.m_CategoryName = _categoryName;
@@ -388,7 +385,7 @@ void ComputeNode::UpdateInternalResolution()
 //	if( m_ResolutionReference == Res_MainInput )
 //		m_ResolutionReference = Res_GlobalSetting; //TODO support MainInput (beware of order of evaluation between nodes)
 
-	u32 res;
+	uint32_t res;
 
 	switch( m_ResolutionReference )
 	{
@@ -400,7 +397,7 @@ void ComputeNode::UpdateInternalResolution()
 
 		case Res_MainInput:
 		{
-			DBG_CHECK( !m_InputSlots.empty() );
+			assert( !m_InputSlots.empty() );
 			shared_ptr<ComputeNode> pInputNode = m_InputSlots[ 0 ].m_RemoteOutputSlot.m_pNode.lock();
 
 			if( pInputNode )
@@ -430,7 +427,7 @@ void ComputeNode::UpdateInternalResolution()
 //	OnResolutionChanged();
 }
 
-bool ComputeNode::SetFixedResolution( u32 _resolution )
+bool ComputeNode::SetFixedResolution( uint32_t _resolution )
 {
 	m_ResolutionReference = Res_Fixed;
 	m_Resolution = _resolution;
@@ -441,7 +438,7 @@ bool ComputeNode::SetFixedResolution( u32 _resolution )
 	return OnResolutionChanged();
 }
 
-bool ComputeNode::SetResolutionModifier( s32 _resolutionModifier )
+bool ComputeNode::SetResolutionModifier( int32_t _resolutionModifier )
 {
 	m_ResolutionModifier = _resolutionModifier;
 	
@@ -616,7 +613,7 @@ tinyxml2::XMLElement* ComputeNode::Save( tinyxml2::XMLDocument& _xmlDoc ) const
 			{
 				Color c;
 				c.FromWin32COLORREF( param.m_Value.c );
-				Str strColor = Format( "%f %f %f", c.r, c.g, c.b );
+				std::string strColor = Format( "%f %f %f", c.r, c.g, c.b );
 				
 				xmlNode->SetAttribute( param.m_Name.c_str(), strColor.c_str() );
 				break;
