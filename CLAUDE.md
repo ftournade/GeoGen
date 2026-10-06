@@ -43,8 +43,12 @@ See README.md for features and build steps.
 - `CustomComputeNode` is the generic HLSL-snippet node. Most simple nodes live in
   `BasicComputeNodes.h` as small subclasses. The snippet sees `_pos`, `_uv`, `_wsPos`,
   `_input0..N`, `_output0..N`, the params by name, and `MinAltitude`/`MaxAltitude`/`Extent`/`Resolution`.
-- Complex nodes (erosion, snow, blur, mountain, scatter, curve, gradient) subclass
-  `ComputeNode` directly and load entry points via `g_Renderer.CreateShader("Shaders/X.hlsl", "Entry", ...)`.
+- Complex nodes (erosion, snow, blur, mountain, scatter, curve, gradient, Fake Erosion V2,
+  Mountain Coloring) subclass `ComputeNode` directly and load entry points via
+  `g_Renderer.CreateShader("Shaders/X.hlsl", "Entry", ...)`. Their constant buffers are shared
+  C++/HLSL headers (`Shaders/*Constants.h`, `#define cbuffer struct` trick), so keep their layouts
+  16-byte aligned. Unconnected optional inputs bind `g_Renderer.GetWhiteTexture()` (1x1, so read
+  them with `SampleLevel`, not `Load`).
 - `DEMGrabFrm`/`DEMGrabView` download Web Mercator tiles through `HTTPConnection` (WinHTTP):
   elevation from AWS Terrain Tiles (terrarium PNG, no key) and imagery from MapTiler Satellite
   (JPEG, API key in `HKCU\Software\GeoGen\MapTilerAPIKey`, see `TerrainTileProviderSetupDlg`).
@@ -76,6 +80,13 @@ See README.md for features and build steps.
 - Types from xtm: `u32`, `s32`, `Str`, `Vec2`, `Color`. COM objects are held in `D3DObject<T>`.
 - Every `.cpp` starts with `#include "stdafx.h"`. MFC message maps for UI classes.
 - No exceptions or RTTI. Return `bool` for failure and log with `LOG(...)`.
+
+## Licensing
+
+`Shaders/FakeErosionCommon.h`, `Shaders/FakeErosionV2.hlsl` and `Shaders/MountainColoring.hlsl`
+are ported from runevision's Shadertoy and are under the Mozilla Public License 2.0. Keep their
+MPL headers and copyright notices, and keep MPL code in those files (or in new files that carry
+the same header) rather than moving it into GeoGen's own sources.
 
 ## Secrets
 

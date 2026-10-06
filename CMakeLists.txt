@@ -61,10 +61,12 @@ set(SRC_COMPUTE_NODES
 	CustomComputeNode.cpp		CustomComputeNode.h
 	ErosionNode.cpp				ErosionNode.h
 	ExtractDetailNode.cpp		ExtractDetailNode.h
+	FakeErosionV2Node.cpp		FakeErosionV2Node.h
 	InputBitmapNode.cpp			InputBitmapNode.h
 	MinstrelNoiseNode.cpp		MinstrelNoiseNode.h
 	MonteCarloErosionNode.cpp	MonteCarloErosionNode.h
 	MonteCarloErosionNodeCPU.cpp	MonteCarloErosionNodeCPU.h
+	MountainColoringNode.cpp	MountainColoringNode.h
 	MountainNode.cpp			MountainNode.h
 	NodeFactory.cpp				NodeFactory.h
 								NormalNode.h
@@ -80,10 +82,15 @@ set(SRC_SHADERS
 	Shaders/Blur.hlsl
 	Shaders/Erosion.hlsl
 	Shaders/ErosionConstants.h
+	Shaders/FakeErosionCommon.h
+	Shaders/FakeErosionV2.hlsl
+	Shaders/FakeErosionV2Constants.h
 	Shaders/MinstrelNoise.hlsl
 	Shaders/MonteCarloErosion.hlsl
 	Shaders/MonteCarloErosionConstants.h
 	Shaders/Mountain.hlsl
+	Shaders/MountainColoring.hlsl
+	Shaders/MountainColoringConstants.h
 	Shaders/Noise.h
 	Shaders/Terrain.hlsl
 	Shaders/Utils.h

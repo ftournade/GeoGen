@@ -36,14 +36,10 @@ dialogs beyond where they touch nodes.
    `pPreviewNode->GetHeightMap()->GetSRV()` with no null check (`NodeEditor.cpp:231`).
 7. **"Relative to first input" on a node with no inputs** (Radial, Gradient, Constant Color,
    Constant Value) indexes `m_InputSlots[ 0 ]` on an empty vector (`ComputeNode.cpp:400-401`).
-8. **Heap overflow in `Map::CopyFromGPU( float* )`** (`ComputeNode.cpp:159-161`). It only asserts
-   that `RowPitch == width * 4`, then copies `DepthPitch` bytes into a buffer it doesn't know the
-   size of.
-   - When the staging row pitch is padded, Release builds overflow. This is driver-dependent but
-     likely for resolutions that aren't a multiple of 64 (the settings allow any value from 64 to
-     16384), or for small ones such as 64 at 1/8.
-   - `MonteCarloErosionNodeCPU::InitSim` (`MonteCarloErosionNodeCPU.cpp:114`) also overflows
-     whenever its input is larger than the node's own resolution.
+8. **Heap overflow in `MonteCarloErosionNodeCPU::InitSim`** (`MonteCarloErosionNodeCPU.cpp:114`).
+   `Map::CopyFromGPU( float* )` doesn't know the destination size, and `InitSim` sizes it with the
+   node's own resolution, so it overflows whenever the input map is larger. (The padded row pitch
+   overflow in `CopyFromGPU` itself is fixed: it now copies row by row.)
 9. **A failed renderer start crashes the preview, and node registration depends on it.** If
    `g_Renderer.Init` fails, `CPreviewWnd::Render()` still runs with a null device context. Nodes
    are only registered (`g_NodeEditor.Init()`, `PreviewWnd.cpp:73`) on the preview pane's first
@@ -122,7 +118,6 @@ dialogs beyond where they touch nodes.
   compiled VS blob. `ScatterMapNode.cpp:464` unbinds CS SRVs instead of PS SRVs.
 - `CPreviewWnd::OnLButtonUp` calls `OnLButtonDown` (`PreviewWnd.cpp:211`). There's no `SetCapture`
   either, so releasing the mouse outside the pane leaves the view rotating.
-- `Map::CopyFromGPU`'s RGBA16 loop uses `m_Height` as the x bound (`ComputeNode.cpp:170`).
 - The CPU erosion's OpenMP loop (Release only) shares one global `rand()` state across threads.
 - `MonteCarloErosionNode::GetOutput() const` dispatches a compute shader on every call, including
   every preview repaint.

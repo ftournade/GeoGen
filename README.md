@@ -4,8 +4,8 @@ GeoGen is a node-based procedural terrain generator for Windows. You build a gra
 nodes (noise generators, modifiers, masks, erosion simulations, etc.); each node runs as a
 Direct3D 11 compute shader on the GPU, and the resulting heightfield is previewed live in 3D.
 
-It also includes a **DEM Grabber** that downloads real-world elevation tiles (Nextzen /
-Mapzen terrain tiles) and aerial imagery (HERE) so real terrain can be used as an input.
+It also includes a **DEM Grabber** that downloads real-world elevation tiles (AWS Terrain
+Tiles) and satellite imagery (MapTiler) so real terrain can be used as an input.
 
 ## Features
 
@@ -20,8 +20,12 @@ Mapzen terrain tiles) and aerial imagery (HERE) so real terrain can be used as a
   | Combiner  | Combine, Mix, Channel Split, Channel Merge |
   | Modifier  | Terrace, Re-Range, Scale & Bias, Invert, Curve, Distort, Blur, Directional Blur, Sharpen, Color Gradient, Extract Detail, Expander, Power, Absolute, Periodic, HSV |
   | Mask      | Altitude Mask, Slope Mask, Convexity Mask |
-  | Natural   | Fake Erosion (Minstrel pseudo-erosion), Erosion (Monte-Carlo, GPU), Erosion (grid-based, GPU), Erosion (CPU), Snow |
+  | Natural   | Fake Erosion (Minstrel pseudo-erosion), Fake Erosion V2 (runevision's erosion filter), Mountain Coloring, Erosion (Monte-Carlo, GPU), Erosion (grid-based, GPU), Erosion (CPU), Snow |
   | I/O       | Preview, Input Bitmap, Output Bitmap, Normal |
+- **Fake Erosion V2** applies runevision's stacked-gully erosion filter to any heightmap
+  (Scale in km, optional strength mask) and outputs the eroded height plus Erosion, Ridges and
+  Drainage masks. **Mountain Coloring** turns them into the filter's color map, as separate
+  Albedo and Lighting maps (Combine → Mul of the two gives the lit color) plus a Trees mask.
 - **Iterative simulations** (erosion, snow) that can run step-by-step with a live preview.
 - **3D preview** window with configurable camera, altitude range, sea level and terrain extent.
 - **Project files** saved as XML with the `.geo` extension.
@@ -31,19 +35,19 @@ Mapzen terrain tiles) and aerial imagery (HERE) so real terrain can be used as a
 - C++ / **MFC** (Visual Studio "MFC Application" with docking panes)
 - **Direct3D 11** compute/vertex/pixel shaders (HLSL in `Shaders/`, compiled at runtime)
 - **TinyXml2** for project files (fetched by CMake)
-- **WinSock** HTTP for DEM tile downloads (HTTPS via OpenSSL is currently disabled)
+- **WinHTTP** for DEM tile downloads (HTTPS) and **stb_image** for PNG/JPEG loading (fetched by CMake)
 - Yuka's in-house **xtm/Core** (subset vendored in `Core/`) and **SimpleD3DFramework** (recreated in `SimpleD3DFramework/`)
 
 ## Building
 
 The project is built with **CMake** and the **Visual Studio 2022 (v143)** toolset.
 
-Dependencies are the Windows SDK, TinyXml2 (fetched by CMake), a subset of xtm/Core vendored in
-`Core/`, and `SimpleD3DFramework/`, a recreation of the original (lost) renderer layer.
+Dependencies are the Windows SDK, TinyXml2 and stb_image (fetched by CMake), a subset of
+xtm/Core vendored in `Core/`, and `SimpleD3DFramework/`, a recreation of the original (lost)
+renderer layer.
 
-> ⚠️ Not tested at runtime yet since the move to CMake. Known gaps: HTTPS tile downloads (OpenSSL
-> code is commented out), JPG/PNG image loading (disabled in the vendored `Bitmap` code), and
-> RenderDoc capture hooks (no-ops).
+> ⚠️ RenderDoc capture hooks are no-ops in the recreated renderer. Known bugs are listed in
+> `bugs.md`.
 
 ### Requirements
 
@@ -90,7 +94,18 @@ The DEM Grabber (File menu) downloads Web Mercator tiles and caches them in
 
 The grabber view shows both attributions.
 
+## Third-party code
+
+- **Fake Erosion V2** and **Mountain Coloring** are ported from runevision's
+  [Advanced Terrain Erosion Filter](https://www.shadertoy.com/view/wXcfWn) Shadertoy
+  (see the [blog post](https://blog.runevision.com/2026/03/fast-and-gorgeous-erosion-filter.html)),
+  copyright (c) 2025 Rune Skovbo Johansen, under the
+  [Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/). The ported files keep that license:
+  `Shaders/FakeErosionCommon.h`, `Shaders/FakeErosionV2.hlsl` and `Shaders/MountainColoring.hlsl`.
+  The Shadertoy's coloring and lighting derive from [Fewes' terrain Shadertoy](https://www.shadertoy.com/view/7ljcRW),
+  and its gradient noise from [Inigo Quilez](https://www.shadertoy.com/view/XdXBRH).
+
 ## Status
 
-This is a personal R&D project (2017–2021) with no tests or CI. Known bugs and ideas are
-tracked in `TODO.txt`.
+This is a personal R&D project (2017–2021) with no tests or CI. Known bugs are listed in
+`bugs.md`, and ideas in `TODO.txt`.

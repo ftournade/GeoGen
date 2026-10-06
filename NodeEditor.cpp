@@ -19,6 +19,8 @@
 #include "ExtractDetailNode.h"
 #include "ScatterMapNode.h"
 #include "PreviewNode.h"
+#include "FakeErosionV2Node.h"
+#include "MountainColoringNode.h"
 
 #include "NodeFactory.h"
 
@@ -110,6 +112,8 @@ bool NodeEditor::Init()
 	REGISTER_COMPUTE_NODE( MonteCarloErosionNode, Natural, "Erosion", 412 );
 	REGISTER_COMPUTE_NODE( MonteCarloErosionNodeCPU, Natural, "Erosion (CPU)", 413 );
 	REGISTER_COMPUTE_NODE( SnowNode, Natural, "Snow", 414 );
+	REGISTER_COMPUTE_NODE( FakeErosionV2Node, Natural, "Fake Erosion V2", 415 );
+	REGISTER_COMPUTE_NODE( MountainColoringNode, Natural, "Mountain Coloring", 416 );
 	
 	REGISTER_COMPUTE_NODE( PreviewNode, InputOutput, "Preview", 510 );
 	REGISTER_COMPUTE_NODE( InputBitmapNode, InputOutput, "Input Bitmap", 511 );

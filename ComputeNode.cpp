@@ -119,7 +119,8 @@ void Map::CopyFromGPU( vector<float>& _data ) const
 
 void Map::CopyFromGPU( float* _data ) const
 {
-	assert( m_Format == DXGI_FORMAT_R32_FLOAT );
+	//Supports R32_FLOAT (1 float per texel) and R16G16B16A16_FLOAT (4 floats per texel) maps
+	assert( ( m_Format == DXGI_FORMAT_R32_FLOAT ) || ( m_Format == DXGI_FORMAT_R16G16B16A16_FLOAT ) );
 
 	//Create staging texture
 	////////////////////////
@@ -156,18 +157,20 @@ void Map::CopyFromGPU( float* _data ) const
 	switch( m_Format )
 	{
 		case DXGI_FORMAT_R32_FLOAT:
-			assert( texDesc.Width * sizeof( float ) == rsrcMap.RowPitch );
-
-			memcpy( _data, rsrcMap.pData, rsrcMap.DepthPitch );
+			//Row by row: the staging texture rows may be padded (RowPitch > Width * sizeof( float ))
+			for( uint32_t y = 0 ; y < texDesc.Height ; ++y )
+			{
+				memcpy( _data + y * texDesc.Width, (const byte*)rsrcMap.pData + y * rsrcMap.RowPitch, texDesc.Width * sizeof( float ) );
+			}
 			break;
 
 		case DXGI_FORMAT_R16G16B16A16_FLOAT:
 		{
-			float16* pSrcTexel = (float16*)rsrcMap.pData;
-
-			for( int y = 0 ; y < m_Height ; ++y )
+			for( uint32_t y = 0 ; y < texDesc.Height ; ++y )
 			{
-				for( int x = 0 ; x < m_Height ; ++x )
+				const float16* pSrcTexel = (const float16*)( (const byte*)rsrcMap.pData + y * rsrcMap.RowPitch );
+
+				for( uint32_t x = 0 ; x < texDesc.Width ; ++x )
 				{
 					float16 v;
 
@@ -556,7 +559,10 @@ bool ComputeNode::Load( const tinyxml2::XMLElement* _xmlNode )
 				Color c;
 				sscanf( strColor, "%f %f %f", &c.r, &c.g, &c.b );
 
-				param.m_Value.c = c.ToWin32COLORREF();
+				//Round to the nearest byte (Color::ToWin32COLORREF() truncates, so e.g. 128/255 saved as
+				//"0.501961" would load back as 127 and colors would drift at each save/load)
+				auto toByte = []( float _v ) { return (u32)lroundf( Saturate( _v ) * 255.0f ); };
+				param.m_Value.c = RGB( toByte( c.r ), toByte( c.g ), toByte( c.b ) );
 				break;
 			}
 			case IOType::Bool:
